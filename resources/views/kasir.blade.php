@@ -18,6 +18,9 @@
     <div class="bg-blue-600 text-white p-5 relative">
         <img src="logo.png" alt="Logo" class="logo"> <!-- Ganti dengan URL logo Anda -->
         <h1 class="text-center text-2xl font-bold">Aplikasi Kasir</h1>
+        <div class="absolute top-5 right-5">
+            <a href="/gudang" class="bg-green-500 text-white px-4 py-2 rounded">Gudang</a>
+        </div>
     </div>
 
     <div class="container mx-auto mt-5">
