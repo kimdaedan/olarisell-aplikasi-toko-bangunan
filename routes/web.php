@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\CashierController;
 
+
 // Rute untuk halaman utama
 Route::get('/', function () {
     return view('welcome');
@@ -17,6 +18,6 @@ Route::resource('products', ProductController::class);
 Route::resource('sales', SaleController::class);
 
 // Rute untuk tampilan kasir
-Route::get('/cashier', function () {
-    return view('cashier'); // Pastikan nama file tampilan sesuai
+Route::get('/kasir', function () {
+    return view('kasir'); // Mengembalikan tampilan cashier
 });
