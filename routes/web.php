@@ -6,6 +6,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\CashierController;
 use App\Http\Controllers\kasirController;
 use App\Http\Controllers\gudangController;
+use App\Http\Controllers\productsController;
 
 
 
@@ -30,8 +31,16 @@ Route::get('/gudang', function () {
     return view('gudang'); // Mengembalikan tampilan warehouse
 });
 
+//rite untuk tampilan gudang
+Route::get('/products', function () {
+    return view('products'); // Mengembalikan tampilan warehouse
+});
+
 // untuk kasir
 Route::get('/kasir', [kasirController::class, 'index']);
 
 // untuk gudang
 Route::get('/gudang', [gudangController::class, 'index']);
+
+// untuk products
+Route::get('/products', [productsController::class, 'index']);

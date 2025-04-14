@@ -13,12 +13,15 @@
         <nav class="w-64 bg-blue-500 text-white p-5">
             <img src="logo.png" alt="Logo" class="max-w-full h-auto mb-4"> <!-- Ganti dengan URL logo Anda -->
             <a href="#" class="block py-2 hover:bg-blue-600">Sell</a>
-            <a href="#" class="block py-2 hover:bg-blue-600">Products</a>
+            <a href="/products" class="block py-2 hover:bg-blue-600">Products</a>
             <a href="#" class="block py-2 hover:bg-blue-600">Expenses</a>
         </nav>
 
         <div class="flex-1 p-5">
-            <h1 class="text-2xl font-bold mb-5">POS</h1>
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-2xl font-bold">POS</h1>
+                <a href="/kasir" class="bg-green-500 text-white px-4 py-2 rounded">Kasir</a> <!-- Tombol Kasir -->
+            </div>
             <div class="flex justify-between items-center mb-4">
                 <span>Show
                     <select class="border border-gray-300 rounded p-1 mx-2">
@@ -29,7 +32,6 @@
                     entries
                 </span>
                 <div>
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded">Export CSV</button>
                     <button class="bg-blue-500 text-white px-4 py-2 rounded">Export Excel</button>
                     <button class="bg-blue-500 text-white px-4 py-2 rounded">Print</button>
                     <button class="bg-blue-500 text-white px-4 py-2 rounded">Export PDF</button>
