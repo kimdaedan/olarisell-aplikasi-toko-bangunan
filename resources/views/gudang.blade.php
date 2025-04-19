@@ -12,9 +12,9 @@
     <div class="flex">
         <nav class="w-64 bg-blue-500 text-white p-5">
             <img src="logo.png" alt="Logo" class="max-w-full h-auto mb-4"> <!-- Ganti dengan URL logo Anda -->
-            <a href="#" class="block py-2 hover:bg-blue-600">Sell</a>
+            <a href="gudang" class="block py-2 hover:bg-blue-600">Sell</a>
             <a href="/products" class="block py-2 hover:bg-blue-600">Products</a>
-            <a href="#" class="block py-2 hover:bg-blue-600">Expenses</a>
+            <a href="expenses" class="block py-2 hover:bg-blue-600">Expenses</a>
         </nav>
 
         <div class="flex-1 p-5">

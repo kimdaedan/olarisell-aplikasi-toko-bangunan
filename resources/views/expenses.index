@@ -76,7 +76,7 @@
                 <thead>
                     <tr>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Date</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Expense Category</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Expense category</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Payment Status</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Actions</th>
                     </tr>

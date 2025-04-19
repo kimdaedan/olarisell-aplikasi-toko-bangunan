@@ -7,6 +7,7 @@ use App\Http\Controllers\CashierController;
 use App\Http\Controllers\kasirController;
 use App\Http\Controllers\gudangController;
 use App\Http\Controllers\productsController;
+use App\Http\Controllers\expensesController;
 
 
 
@@ -44,3 +45,9 @@ Route::get('/gudang', [gudangController::class, 'index']);
 
 // untuk products
 Route::get('/products', [productsController::class, 'index']);
+
+// untuk expenses
+use App\Http\Controllers\ExpenseController;
+
+Route::get('/expenses', [expensesController::class, 'index'])->name('expenses.index');
+Route::post('/expenses', [expensesController::class, 'store']);
