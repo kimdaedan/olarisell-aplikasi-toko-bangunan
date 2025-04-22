@@ -35,16 +35,16 @@
                 <form action="{{ url('/products') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-4">
-                        <label class="block mb-1" for="product_image">Product Image:</label>
-                        <input type="file" id="product_image" name="product_image" class="border border-gray-300 rounded p-2 w-full" accept="image/*" required>
-                    </div>
-                    <div class="mb-4">
                         <label class="block mb-1" for="product_name">Product Name:</label>
                         <input type="text" id="product_name" name="product_name" class="border border-gray-300 rounded p-2 w-full" required>
                     </div>
                     <div class="mb-4">
                         <label class="block mb-1" for="current_stock">Current Stock:</label>
                         <input type="number" id="current_stock" name="current_stock" class="border border-gray-300 rounded p-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-1" for="product_image">Product Image:</label>
+                        <input type="file" id="product_image" name="product_image" class="border border-gray-300 rounded p-2 w-full">
                     </div>
                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
                     <button type="button" onclick="toggleForm()" class="bg-gray-500 text-white px-4 py-2 rounded ml-2">Batal</button>
@@ -64,8 +64,7 @@
                     @foreach ($products as $product)
                         <tr>
                             <td class="border border-gray-300 p-2">
-                                <!-- Ganti [Image] dengan tag <img> untuk menampilkan gambar -->
-                                <img src="{{ asset('storage/' . $product->image_path) }}" alt="Product Image" class="w-16 h-16 object-cover">
+                                <img src="{{ asset($product->product_image) }}" alt="{{ $product->product_name }}" class="w-16 h-auto">
                             </td>
                             <td class="border border-gray-300 p-2">{{ $product->product_name }}</td>
                             <td class="border border-gray-300 p-2">{{ $product->current_stock }}</td>
