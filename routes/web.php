@@ -44,7 +44,8 @@ Route::get('/kasir', [kasirController::class, 'index']);
 Route::get('/gudang', [gudangController::class, 'index']);
 
 // untuk products
-Route::get('/products', [productsController::class, 'index']);
+Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
+Route::post('/products', [ProductsController::class, 'store']);
 
 // untuk expenses
 use App\Http\Controllers\ExpenseController;

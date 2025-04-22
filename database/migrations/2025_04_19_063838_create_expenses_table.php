@@ -9,21 +9,23 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
-{
-    Schema::create('expenses', function (Blueprint $table) {
-        $table->id();
-        $table->dateTime('date');
-        $table->string('category');
-        $table->string('payment_status');
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('expenses', function (Blueprint $table) {
+            $table->id(); // Kolom ID
+            $table->date('date'); // Kolom tanggal
+            $table->string('category'); // Kolom kategori
+            $table->decimal('amount', 10, 2); // Kolom jumlah
+            $table->string('payment_status'); // Kolom status pembayaran
+            $table->timestamps(); // Kolom untuk created_at dan updated_at
+        });
+    }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('expenses');
+        Schema::dropIfExists('expenses'); // Menghapus tabel jika rollback
     }
 };

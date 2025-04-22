@@ -61,6 +61,10 @@
                         <input type="text" id="category" name="category" class="border border-gray-300 rounded p-2 w-full" required>
                     </div>
                     <div class="mb-4">
+                        <label class="block mb-1" for="amount">Jumlah:</label>
+                        <input type="number" id="amount" name="amount" class="border border-gray-300 rounded p-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
                         <label class="block mb-1" for="status">Status Pembayaran:</label>
                         <select id="status" name="status" class="border border-gray-300 rounded p-2 w-full" required>
                             <option value="paid">Paid</option>
@@ -77,6 +81,7 @@
                     <tr>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Date</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Expense Category</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Total Amount</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Payment Status</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Actions</th>
                     </tr>
@@ -86,6 +91,7 @@
                         <tr>
                             <td class="border border-gray-300 p-2">{{ $expense->date }}</td>
                             <td class="border border-gray-300 p-2">{{ $expense->category }}</td>
+                            <td class="border border-gray-300 p-2">{{ number_format($expense->amount, 2) }}</td>
                             <td class="border border-gray-300 p-2">{{ $expense->payment_status }}</td>
                             <td class="border border-gray-300 p-2">
                                 <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>

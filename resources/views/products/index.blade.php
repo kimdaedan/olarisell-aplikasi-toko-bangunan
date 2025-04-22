@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script>
         function toggleForm() {
-            const form = document.getElementById('addExpenseForm');
+            const form = document.getElementById('addProductForm');
             form.classList.toggle('hidden');
         }
     </script>
@@ -25,47 +25,26 @@
 
         <div class="flex-1 p-5">
             <div class="flex justify-between items-center mb-4">
-                <h1 class="text-2xl font-bold">POS</h1>
-                <div>
-                    <a href="/kasir" class="bg-green-500 text-white px-4 py-2 rounded">Kasir</a> <!-- Tombol Kasir -->
-                    <button onclick="toggleForm()" class="bg-red-500 text-white px-4 py-2 rounded ml-2">Tambah</button> <!-- Tombol Tambah -->
-                </div>
-            </div>
-            <div class="flex justify-between items-center mb-4">
-                <span>Show
-                    <select class="border border-gray-300 rounded p-1 mx-2">
-                        <option>25</option>
-                        <option>50</option>
-                        <option>100</option>
-                    </select>
-                    entries
-                </span>
-                <div>
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded">Export Excel</button>
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded">Print</button>
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded">Export PDF</button>
-                </div>
+                <h1 class="text-2xl font-bold">Products</h1>
+                <button onclick="toggleForm()" class="bg-red-500 text-white px-4 py-2 rounded">Tambah Produk</button>
             </div>
 
-            <!-- Form untuk menambahkan data -->
-            <div id="addExpenseForm" class="hidden mb-4 p-4 border border-gray-300 rounded bg-white">
-                <h2 class="text-xl font-bold mb-2">Tambah Pengeluaran</h2>
-                <form action="{{ url('/expenses') }}" method="POST">
+            <!-- Form untuk menambahkan data produk -->
+            <div id="addProductForm" class="hidden mb-4 p-4 border border-gray-300 rounded bg-white">
+                <h2 class="text-xl font-bold mb-2">Tambah Produk</h2>
+                <form action="{{ url('/products') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-4">
-                        <label class="block mb-1" for="date">Tanggal:</label>
-                        <input type="datetime-local" id="date" name="date" class="border border-gray-300 rounded p-2 w-full" required>
+                        <label class="block mb-1" for="product_image">Product Image:</label>
+                        <input type="file" id="product_image" name="product_image" class="border border-gray-300 rounded p-2 w-full" accept="image/*" required>
                     </div>
                     <div class="mb-4">
-                        <label class="block mb-1" for="category">Kategori Pengeluaran:</label>
-                        <input type="text" id="category" name="category" class="border border-gray-300 rounded p-2 w-full" required>
+                        <label class="block mb-1" for="product_name">Product Name:</label>
+                        <input type="text" id="product_name" name="product_name" class="border border-gray-300 rounded p-2 w-full" required>
                     </div>
                     <div class="mb-4">
-                        <label class="block mb-1" for="status">Status Pembayaran:</label>
-                        <select id="status" name="status" class="border border-gray-300 rounded p-2 w-full" required>
-                            <option value="paid">Paid</option>
-                            <option value="unpaid">Unpaid</option>
-                        </select>
+                        <label class="block mb-1" for="current_stock">Current Stock:</label>
+                        <input type="number" id="current_stock" name="current_stock" class="border border-gray-300 rounded p-2 w-full" required>
                     </div>
                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
                     <button type="button" onclick="toggleForm()" class="bg-gray-500 text-white px-4 py-2 rounded ml-2">Batal</button>
@@ -75,18 +54,21 @@
             <table class="min-w-full border-collapse border border-gray-200">
                 <thead>
                     <tr>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Date</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Expense Category</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Payment Status</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Product Image</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Product Name</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Current Stock</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($expenses as $expense)
+                    @foreach ($products as $product)
                         <tr>
-                            <td class="border border-gray-300 p-2">{{ $expense->date }}</td>
-                            <td class="border border-gray-300 p-2">{{ $expense->category }}</td>
-                            <td class="border border-gray-300 p-2">{{ $expense->payment_status }}</td>
+                            <td class="border border-gray-300 p-2">
+                                <!-- Ganti [Image] dengan tag <img> untuk menampilkan gambar -->
+                                <img src="{{ asset('storage/' . $product->image_path) }}" alt="Product Image" class="w-16 h-16 object-cover">
+                            </td>
+                            <td class="border border-gray-300 p-2">{{ $product->product_name }}</td>
+                            <td class="border border-gray-300 p-2">{{ $product->current_stock }}</td>
                             <td class="border border-gray-300 p-2">
                                 <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
                             </td>

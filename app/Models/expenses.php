@@ -9,6 +9,10 @@ class Expenses extends Model
 {
     use HasFactory;
 
-    // Pastikan kolom yang diizinkan untuk mass assignment dicantumkan di sini
-    protected $fillable = ['date', 'category', 'payment_status'];
+    protected $fillable = [
+        'date',
+        'category',
+        'amount', // Tambahkan amount di sini
+        'payment_status',
+    ];
 }

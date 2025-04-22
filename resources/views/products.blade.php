@@ -6,6 +6,12 @@
     <title>OLARISELL</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script>
+        function toggleForm() {
+            const form = document.getElementById('addProductForm');
+            form.classList.toggle('hidden');
+        }
+    </script>
 </head>
 <body class="bg-gray-100">
 
@@ -19,24 +25,30 @@
 
         <div class="flex-1 p-5">
             <div class="flex justify-between items-center mb-4">
-                <h1 class="text-2xl font-bold">POS</h1>
-                <a href="/kasir" class="bg-green-500 text-white px-4 py-2 rounded">Kasir</a> <!-- Tombol Kasir -->
+                <h1 class="text-2xl font-bold">Products</h1>
+                <button onclick="toggleForm()" class="bg-red-500 text-white px-4 py-2 rounded">Tambah Produk</button>
             </div>
-            <div class="flex justify-between items-center mb-4">
-                <span>Show
-                    <select class="border border-gray-300 rounded p-1 mx-2">
-                        <option>25</option>
-                        <option>50</option>
-                        <option>100</option>
-                    </select>
-                    entries
-                </span>
-                <div>
-                    <button class="bg-red-500 text-white px-4 py-2 rounded">Tambah</button>
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded">Export Excel</button>
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded">Print</button>
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded">Export PDF</button>
-                </div>
+
+            <!-- Form untuk menambahkan data produk -->
+            <div id="addProductForm" class="hidden mb-4 p-4 border border-gray-300 rounded bg-white">
+                <h2 class="text-xl font-bold mb-2">Tambah Produk</h2>
+                <form action="{{ url('/products') }}" method="POST">
+                    @csrf
+                    <div class="mb-4">
+                        <label class="block mb-1" for="product_code">Product Code:</label>
+                        <input type="text" id="product_code" name="product_code" class="border border-gray-300 rounded p-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-1" for="product_name">Product Name:</label>
+                        <input type="text" id="product_name" name="product_name" class="border border-gray-300 rounded p-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-1" for="current_stock">Current Stock:</label>
+                        <input type="number" id="current_stock" name="current_stock" class="border border-gray-300 rounded p-2 w-full" required>
+                    </div>
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
+                    <button type="button" onclick="toggleForm()" class="bg-gray-500 text-white px-4 py-2 rounded ml-2">Batal</button>
+                </form>
             </div>
 
             <table class="min-w-full border-collapse border border-gray-200">
@@ -49,32 +61,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="border border-gray-300 p-2">[Image]</td>
-                        <td class="border border-gray-300 p-2">CS-2025-10591</td>
-                        <td class="border border-gray-300 p-2">LISA - MEDITERANIA JJ 1 NO 10</td>
+                    @foreach ($products as $product) <!-- Gantilah ini sesuai dengan model Anda -->
+                        <tr>
                         <td class="border border-gray-300 p-2">
-                            <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="border border-gray-300 p-2">[Image]</td>
-                        <td class="border border-gray-300 p-2">CS-2025-10590</td>
-                        <td class="border border-gray-300 p-2">MEDI - CENTRAL RESIDENT NO 3</td>
-                        <td class="border border-gray-300 p-2">
-                            <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="border border-gray-300 p-2">[Image]</td>
-                        <td class="border border-gray-300 p-2">CS-2025-10582</td>
-                        <td class="border border-gray-300 p-2">TB KARYA ABADI SUKSES - TIBAN 6</td>
-                        <td class="border border-gray-300 p-2">
-                            <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
-                        </td>
-                    </tr>
+    <img src="{{ asset($product->product_image) }}" alt="{{ $product->product_name }}" class="w-16 h-auto">
+</td>
+                            <td class="border border-gray-300 p-2">{{ $product->product_code }}</td>
+                            <td class="border border-gray-300 p-2">{{ $product->product_name }}</td>
+                            <td class="border border-gray-300 p-2">{{ $product->current_stock }}</td>
+                            <td class="border border-gray-300 p-2">
+                                <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
+
             <!-- Bagian bawah tabel dikosongkan -->
             <div class="mt-5"></div>
         </div>
