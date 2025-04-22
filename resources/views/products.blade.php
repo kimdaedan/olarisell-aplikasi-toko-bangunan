@@ -22,6 +22,14 @@
             <a href="/products" class="block py-2 hover:bg-blue-600">Products</a>
             <a href="/expenses" class="block py-2 hover:bg-blue-600">Expenses</a>
         </nav>
+        <div class="flex-1 p-5">
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-2xl font-bold">POS</h1>
+                <div>
+                    <a href="/kasir" class="bg-green-500 text-white px-4 py-2 rounded">Kasir</a> <!-- Tombol Kasir -->
+                    <button onclick="toggleForm()" class="bg-red-500 text-white px-4 py-2 rounded ml-2">Tambah</button> <!-- Tombol Tambah -->
+                </div>
+            </div>
 
         <div class="flex-1 p-5">
             <div class="flex justify-between items-center mb-4">
@@ -32,12 +40,8 @@
             <!-- Form untuk menambahkan data produk -->
             <div id="addProductForm" class="hidden mb-4 p-4 border border-gray-300 rounded bg-white">
                 <h2 class="text-xl font-bold mb-2">Tambah Produk</h2>
-                <form action="{{ url('/products') }}" method="POST">
+                <form action="{{ url('/products') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="mb-4">
-                        <label class="block mb-1" for="product_code">Product Code:</label>
-                        <input type="text" id="product_code" name="product_code" class="border border-gray-300 rounded p-2 w-full" required>
-                    </div>
                     <div class="mb-4">
                         <label class="block mb-1" for="product_name">Product Name:</label>
                         <input type="text" id="product_name" name="product_name" class="border border-gray-300 rounded p-2 w-full" required>
@@ -45,6 +49,10 @@
                     <div class="mb-4">
                         <label class="block mb-1" for="current_stock">Current Stock:</label>
                         <input type="number" id="current_stock" name="current_stock" class="border border-gray-300 rounded p-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-1" for="product_image">Product Image:</label>
+                        <input type="file" id="product_image" name="product_image" class="border border-gray-300 rounded p-2 w-full">
                     </div>
                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
                     <button type="button" onclick="toggleForm()" class="bg-gray-500 text-white px-4 py-2 rounded ml-2">Batal</button>
@@ -55,18 +63,17 @@
                 <thead>
                     <tr>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Product Image</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Products</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Product Name</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Current Stock</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($products as $product) <!-- Gantilah ini sesuai dengan model Anda -->
+                    @foreach ($products as $product)
                         <tr>
-                        <td class="border border-gray-300 p-2">
-    <img src="{{ asset($product->product_image) }}" alt="{{ $product->product_name }}" class="w-16 h-auto">
-</td>
-                            <td class="border border-gray-300 p-2">{{ $product->product_code }}</td>
+                            <td class="border border-gray-300 p-2">
+                                <img src="{{ asset($product->product_image) }}" alt="{{ $product->product_name }}" class="w-16 h-auto">
+                            </td>
                             <td class="border border-gray-300 p-2">{{ $product->product_name }}</td>
                             <td class="border border-gray-300 p-2">{{ $product->current_stock }}</td>
                             <td class="border border-gray-300 p-2">
