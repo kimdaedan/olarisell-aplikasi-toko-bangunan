@@ -43,7 +43,6 @@
                     <tr>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Action</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Date</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Invoice No.</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Customer Name</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Contact Number</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Location</th>
@@ -57,34 +56,31 @@
                     <tr>
                         <td class="border border-gray-300 p-2"><button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button></td>
                         <td class="border border-gray-300 p-2">14/04/2025 09:17</td>
-                        <td class="border border-gray-300 p-2">CS-2025-10591</td>
-                        <td class="border border-gray-300 p-2">LISA - MEDITERANIA JJ 1 NO 10</td>
+                        <td class="border border-gray-300 p-2">LISA - MEDITERANIA</td>
                         <td class="border border-gray-300 p-2">8756454</td>
-                        <td class="border border-gray-300 p-2">Tasniem Gerai Inspirasi 1</td>
+                        <td class="border border-gray-300 p-2">Toko Bangunan 1</td>
                         <td class="border border-gray-300 p-2">Paid</td>
-                        <td class="border border-gray-300 p-2">BRI TGI</td>
+                        <td class="border border-gray-300 p-2">Cash</td>
                         <td class="border border-gray-300 p-2">Rp 760,000.00</td>
                         <td class="border border-gray-300 p-2">Rp 760,000.00</td>
                     </tr>
                     <tr>
                         <td class="border border-gray-300 p-2"><button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button></td>
                         <td class="border border-gray-300 p-2">13/04/2025 09:14</td>
-                        <td class="border border-gray-300 p-2">CS-2025-10590</td>
-                        <td class="border border-gray-300 p-2">MEDI - CENTRAL RESIDENT NO 3</td>
+                        <td class="border border-gray-300 p-2">MEDI - CENTRAL RESIDENT</td>
                         <td class="border border-gray-300 p-2">8765</td>
-                        <td class="border border-gray-300 p-2">Tasniem Gerai Inspirasi 1</td>
+                        <td class="border border-gray-300 p-2">Toko Bangunan 1</td>
                         <td class="border border-gray-300 p-2">Paid</td>
-                        <td class="border border-gray-300 p-2">Mandiri TGI</td>
+                        <td class="border border-gray-300 p-2">CashI</td>
                         <td class="border border-gray-300 p-2">Rp 2,450,000.00</td>
                         <td class="border border-gray-300 p-2">Rp 2,450,000.00</td>
                     </tr>
                     <tr>
                         <td class="border border-gray-300 p-2"><button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button></td>
                         <td class="border border-gray-300 p-2">12/04/2025 16:16</td>
-                        <td class="border border-gray-300 p-2">CS-2025-10582</td>
-                        <td class="border border-gray-300 p-2">TB KARYA ABADI SUKSES - TIBAN 6</td>
+                        <td class="border border-gray-300 p-2">Budi - Valley Park</td>
                         <td class="border border-gray-300 p-2">082391247858</td>
-                        <td class="border border-gray-300 p-2">Tasniem Gerai Inspirasi 1</td>
+                        <td class="border border-gray-300 p-2">Toko Bangunan 1</td>
                         <td class="border border-gray-300 p-2">Paid</td>
                         <td class="border border-gray-300 p-2">Cash</td>
                         <td class="border border-gray-300 p-2">Rp 1,960,000.00</td>
