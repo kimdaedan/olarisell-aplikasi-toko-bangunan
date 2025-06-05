@@ -52,3 +52,6 @@ use App\Http\Controllers\ExpenseController;
 
 Route::get('/expenses', [expensesController::class, 'index'])->name('expenses.index');
 Route::post('/expenses', [expensesController::class, 'store']);
+
+
+
