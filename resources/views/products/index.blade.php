@@ -25,29 +25,33 @@
 
         <div class="flex-1 p-5">
             <div class="flex justify-between items-center mb-4">
-                <h1 class="text-2xl font-bold">Products</h1>
-                <div>
-                    <button onclick="toggleForm()" class="bg-red-500 text-white px-4 py-2 rounded">Tambah Produk</button>
-                    <a href="/kasir" class="bg-green-500 text-white px-4 py-2 rounded ml-2">Kasir</a>
+                <h1 class="text-2xl font-bold">Produk</h1>
+                <<div>
+                    <a href="/kasir" class="bg-green-500 text-white px-4 py-2 rounded">Kasir</a> <!-- Tombol Kasir -->
+                    <button onclick="toggleForm()" class="bg-red-500 text-white px-4 py-2 rounded ml-2">Tambah</button> <!-- Tombol Tambah -->
                 </div>
             </div>
 
             <!-- Form untuk menambahkan data produk -->
             <div id="addProductForm" class="hidden mb-4 p-4 border border-gray-300 rounded bg-white">
                 <h2 class="text-xl font-bold mb-2">Tambah Produk</h2>
-                <form action="{{ url('/products') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-4">
-                        <label class="block mb-1" for="product_name">Product Name:</label>
-                        <input type="text" id="product_name" name="product_name" class="border border-gray-300 rounded p-2 w-full" required>
+                        <label class="block mb-1" for="product_image">Gambar Produk:</label>
+                        <input type="file" id="product_image" name="gambar" class="border border-gray-300 rounded p-2 w-full" required>
                     </div>
                     <div class="mb-4">
-                        <label class="block mb-1" for="current_stock">Current Stock:</label>
-                        <input type="number" id="current_stock" name="current_stock" class="border border-gray-300 rounded p-2 w-full" required>
+                        <label class="block mb-1" for="product_name">Nama Produk:</label>
+                        <input type="text" id="product_name" name="nama" class="border border-gray-300 rounded p-2 w-full" required>
                     </div>
                     <div class="mb-4">
-                        <label class="block mb-1" for="product_image">Product Image:</label>
-                        <input type="file" id="product_image" name="product_image" class="border border-gray-300 rounded p-2 w-full">
+                        <label class="block mb-1" for="product_price">Harga:</label>
+                        <input type="number" id="product_price" name="harga" class="border border-gray-300 rounded p-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-1" for="product_stock">Stok:</label>
+                        <input type="number" id="product_stock" name="jumlah" class="border border-gray-300 rounded p-2 w-full" required>
                     </div>
                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
                     <button type="button" onclick="toggleForm()" class="bg-gray-500 text-white px-4 py-2 rounded ml-2">Batal</button>
@@ -57,20 +61,22 @@
             <table class="min-w-full border-collapse border border-gray-200">
                 <thead>
                     <tr>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Product Image</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Product Name</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Current Stock</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Actions</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Gambar</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Nama Produk</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Harga</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Stok</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($products as $product)
                         <tr>
                             <td class="border border-gray-300 p-2">
-                                <img src="{{ asset($product->product_image) }}" alt="{{ $product->product_name }}" class="w-16 h-auto">
+                                <img src="{{ asset($product->gambar) }}" alt="{{ $product->nama }}" class="w-16 h-auto">
                             </td>
-                            <td class="border border-gray-300 p-2">{{ $product->product_name }}</td>
-                            <td class="border border-gray-300 p-2">{{ $product->current_stock }}</td>
+                            <td class="border border-gray-300 p-2">{{ $product->nama }}</td>
+                            <td class="border border-gray-300 p-2">{{ number_format($product->harga, 2) }}</td>
+                            <td class="border border-gray-300 p-2">{{ $product->jumlah }}</td>
                             <td class="border border-gray-300 p-2">
                                 <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
                             </td>

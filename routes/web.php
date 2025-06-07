@@ -17,7 +17,7 @@ Route::get('/', function () {
 });
 
 // Rute untuk resource products
-Route::resource('products', ProductController::class);
+
 
 // Rute untuk resource sales
 Route::resource('sales', SaleController::class);
@@ -32,10 +32,7 @@ Route::get('/gudang', function () {
     return view('gudang'); // Mengembalikan tampilan warehouse
 });
 
-//rite untuk tampilan gudang
-Route::get('/products', function () {
-    return view('products'); // Mengembalikan tampilan warehouse
-});
+
 
 // untuk kasir
 Route::get('/kasir', [kasirController::class, 'index']);
@@ -45,7 +42,7 @@ Route::get('/gudang', [gudangController::class, 'index']);
 
 // untuk products
 Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
-Route::post('/products', [ProductsController::class, 'store']);
+Route::post('/products', [ProductsController::class, 'store'])->name('products.store');
 
 // untuk expenses
 use App\Http\Controllers\ExpenseController;

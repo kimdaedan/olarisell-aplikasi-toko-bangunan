@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product; // Pastikan model Product diimpor
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http; // Untuk menggunakan HTTP client
 
 class ProductsController extends Controller
 {
@@ -16,31 +17,44 @@ class ProductsController extends Controller
 
     // Metode untuk menyimpan produk baru
     public function store(Request $request)
-{
-    // Validasi data
-    $request->validate([
-        'product_name' => 'required|string|max:255',
-        'current_stock' => 'required|integer',
-        'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi gambar
-    ]);
+    {
+        // Validasi data
+        $request->validate([
+            'nama' => 'required|string|max:100',
+            'jumlah' => 'required|integer',
+            'harga' => 'required|numeric',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    // Membuat instance produk baru
-    $product = new Product();
-    $product->product_name = $request->input('product_name');
-    $product->current_stock = $request->input('current_stock');
+        // Membuat instance produk baru
+        $product = new Product();
+        $product->nama = $request->input('nama');
+        $product->jumlah = $request->input('jumlah');
+        $product->harga = $request->input('harga');
 
-    // Menyimpan gambar
-    if ($request->hasFile('product_image')) {
-        $file = $request->file('product_image');
-        $filename = time() . '_' . $file->getClientOriginalName(); // Menyimpan dengan timestamp
-        $file->move(public_path('images'), $filename); // Pindahkan ke folder public/images
-        $product->product_image = 'images/' . $filename; // Simpan path di database
+        // Menyimpan gambar
+        if ($request->hasFile('gambar')) {
+            $file = $request->file('gambar');
+            $filename = time() . '_' . $file->getClientOriginalName(); // Menyimpan dengan timestamp
+            $file->move(public_path('images'), $filename); // Pindahkan ke folder public/images
+            $product->gambar = 'images/' . $filename; // Simpan path di database
+        }
+
+        // Simpan produk ke database
+        $product->save();
+
+        // Kirim data ke API Django
+        $response = Http::post('http://localhost:8000/api/gudang/product', [
+            'nama' => $product->nama,
+            'jumlah' => $product->jumlah,
+            'harga' => $product->harga,
+            'gambar' => $product->gambar,
+        ]);
+
+        if ($response->successful()) {
+            return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan dan terkirim ke API.');
+        } else {
+            return redirect()->route('products.index')->with('error', 'Produk berhasil ditambahkan, tetapi gagal terkirim ke API.');
+        }
     }
-
-    // Simpan produk ke database
-    $product->save();
-
-    // Redirect atau kembali ke halaman sebelumnya
-    return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
-}
 }

@@ -25,7 +25,7 @@
 
         <div class="flex-1 p-5">
             <div class="flex justify-between items-center mb-4">
-                <h1 class="text-2xl font-bold">POS</h1>
+                <h1 class="text-2xl font-bold">Pengeluaran</h1>
                 <div>
                     <a href="/kasir" class="bg-green-500 text-white px-4 py-2 rounded">Kasir</a> <!-- Tombol Kasir -->
                     <button onclick="toggleForm()" class="bg-red-500 text-white px-4 py-2 rounded ml-2">Tambah</button> <!-- Tombol Tambah -->
