@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Kasir; // Pastikan mengimpor model Kasir
+use App\Models\Kasir; // Model untuk produk
+use App\Models\KasirCustomer; // Model untuk customer
 use Illuminate\Http\Request;
 
 class KasirController extends Controller
@@ -10,12 +11,15 @@ class KasirController extends Controller
     public function index(Request $request)
     {
         $query = $request->input('search');
+
         if ($query) {
-            $produk = Kasir::where('nama', 'LIKE', "%{$query}%")->get(); // Mengambil produk yang cocok
+            $produk = Kasir::where('nama', 'LIKE', "%{$query}%")->get();
         } else {
-            $produk = Kasir::all(); // Ambil semua produk jika tidak ada pencarian
+            $produk = Kasir::all();
         }
 
-        return view('kasir.index', compact('produk'));
+        $customers = kasir::all(); // Ambil semua customer untuk ditampilkan
+
+        return view('kasir.index', compact('produk', 'customers'));
     }
 }
