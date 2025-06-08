@@ -2,59 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product; // Pastikan model Product diimpor
+use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http; // Untuk menggunakan HTTP client
+use Illuminate\Support\Facades\Storage;
 
 class ProductsController extends Controller
 {
-    // Metode untuk menampilkan daftar produk
     public function index()
     {
-        $products = Product::all(); // Ambil semua produk dari database
-        return view('products.index', compact('products')); // Kirim data ke tampilan
+        $products = Product::all();
+        return view('products.index', compact('products'));
     }
 
-    // Metode untuk menyimpan produk baru
     public function store(Request $request)
     {
-        // Validasi data
         $request->validate([
             'nama' => 'required|string|max:100',
             'jumlah' => 'required|integer',
             'harga' => 'required|numeric',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Ubah dari nullable ke required
         ]);
 
-        // Membuat instance produk baru
-        $product = new Product();
-        $product->nama = $request->input('nama');
-        $product->jumlah = $request->input('jumlah');
-        $product->harga = $request->input('harga');
-
-        // Menyimpan gambar
+        // Handle file upload
         if ($request->hasFile('gambar')) {
-            $file = $request->file('gambar');
-            $filename = time() . '_' . $file->getClientOriginalName(); // Menyimpan dengan timestamp
-            $file->move(public_path('images'), $filename); // Pindahkan ke folder public/images
-            $product->gambar = 'images/' . $filename; // Simpan path di database
+            // Simpan file ke storage/app/public/images
+            $path = $request->file('gambar')->store('images', 'public');
+
+            // Buat record produk
+            $product = Product::create([
+                'nama' => $request->nama,
+                'jumlah' => $request->jumlah,
+                'harga' => $request->harga,
+                'gambar' => $path // Simpan path relatif
+            ]);
         }
 
-        // Simpan produk ke database
-        $product->save();
-
-        // Kirim data ke API Django
-        $response = Http::post('http://localhost:8000/api/gudang/product', [
-            'nama' => $product->nama,
-            'jumlah' => $product->jumlah,
-            'harga' => $product->harga,
-            'gambar' => $product->gambar,
-        ]);
-
-        if ($response->successful()) {
-            return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan dan terkirim ke API.');
-        } else {
-            return redirect()->route('products.index')->with('error', 'Produk berhasil ditambahkan, tetapi gagal terkirim ke API.');
-        }
+        return redirect()->route('products.index')
+                         ->with('success', 'Produk berhasil ditambahkan.');
     }
 }

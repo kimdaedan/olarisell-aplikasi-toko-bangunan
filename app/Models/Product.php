@@ -22,4 +22,36 @@ class Product extends Model
 
     // Menentukan bahwa model harus menggunakan timestamps
     public $timestamps = true; // Jika tabel memiliki kolom created_at dan updated_at
+
+    /**
+     * Scope untuk produk yang tersedia (jumlah > 0)
+     */
+    public function scopeAvailable($query)
+    {
+        return $query->where('jumlah', '>', 0);
+    }
+
+    /**
+     * Scope untuk pencarian produk
+     */
+    public function scopeSearch($query, $keyword)
+    {
+        return $query->where('nama', 'like', '%'.$keyword.'%');
+    }
+
+    /**
+     * Format harga untuk tampilan
+     */
+    public function getFormattedPriceAttribute()
+    {
+        return 'Rp ' . number_format($this->harga, 0, ',', '.');
+    }
+
+    /**
+     * Path gambar produk
+     */
+    public function getImagePathAttribute()
+    {
+        return $this->gambar ? asset('storage/products/'.$this->gambar) : asset('images/default-product.png');
+    }
 }
