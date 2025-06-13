@@ -15,7 +15,7 @@
     <img src="logo.png" alt="Logo" class="h-10">
     <div class="flex items-center">
         <form action="{{ route('kasir.index') }}" method="GET" class="mr-2">
-            <input type="text" name="search" placeholder="Cari Produk..." class="p-2 rounded border border-gray-300" value="{{ request('search') }}">
+            <input type="text" name="search" placeholder="Cari Produk..." class="p-2 rounded border border-gray-300 bg-white text-black" value="{{ request('search') }}">
         </form>
         <a href="{{ route('customers.create') }}" class="bg-white text-blue-600 px-4 py-2 rounded">Tambah Data Customer</a>
         <a href="{{ route('gudang.index') }}" class="bg-white text-blue-600 px-4 py-2 rounded ml-2">Gudang</a>
@@ -30,11 +30,11 @@
             @foreach($produk as $item)
                 <li>
                     <a href="#" class="flex items-center mb-4 border-b border-gray-300 pb-2" onclick="addProduct('{{ $item->nama }}', {{ $item->harga }})">
-                        <img src="{{ asset('images/' . $item->gambar) }}" alt="{{ $item->nama }}" class="h-20 w-20 object-cover mr-4">
+                        <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama }}" class="h-20 w-20 object-cover mr-4">
                         <div class="flex-1">
                             <div class="font-semibold">{{ $item->nama }}</div>
                             <div class="text-gray-700">Harga: Rp {{ number_format($item->harga, 0, ',', '.') }}</div>
-                            <div class="text-gray-700">Stok: {{ $item->stok }}</div>
+                            <div class="text-gray-700">Stok: {{ $item->jumlah }}</div>
                         </div>
                     </a>
                 </li>
@@ -55,6 +55,18 @@
                     <option value="{{ $customer->id }}">{{ $customer->nama }}</option>
                 @endforeach
             </select>
+        </div>
+
+        <!-- Kolom untuk Metode Pembayaran -->
+        <div class="mb-4">
+            <label for="payment_method" class="block text-sm font-medium text-gray-700">Metode Pembayaran</label>
+            <input type="text" id="payment_method" name="payment_method" placeholder="Masukkan Metode Pembayaran" class="mt-1 block w-full p-2 border border-gray-300 rounded">
+        </div>
+
+        <!-- Kolom untuk Tanggal -->
+        <div class="mb-4">
+            <label for="payment_date" class="block text-sm font-medium text-gray-700">Tanggal</label>
+            <input type="date" id="payment_date" name="payment_date" class="mt-1 block w-full p-2 border border-gray-300 rounded" value="{{ date('Y-m-d') }}" readonly>
         </div>
 
         <script>
@@ -122,12 +134,21 @@
             delete products[name];
             renderProducts();
         }
+
+        // Tambahkan event listener untuk pencarian
+        $('input[name="search"]').on('input', function() {
+            const searchTerm = $(this).val().toLowerCase();
+            $('#product-list li').each(function() {
+                const productName = $(this).text().toLowerCase();
+                $(this).toggle(productName.includes(searchTerm));
+            });
+        });
         </script>
 
         <p id="total-price" class="mt-4 text-xl font-bold">Total: Rp 0</p>
-        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Hitung Harga</button>
-    </div>
-</div>
+        <button id="submit-transaction" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Closing</button>
+
+
 
 </body>
 </html>

@@ -46,6 +46,7 @@ Route::get('/gudang', [GudangController::class, 'index'])->name('gudang.index');
 // untuk products
 Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
 Route::post('/products', [ProductsController::class, 'store'])->name('products.store');
+
 Route::get('/products/{id}', [ProductsController::class, 'show'])->name('product.show');
 
 // untuk expenses

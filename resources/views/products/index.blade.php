@@ -59,31 +59,31 @@
             </div>
 
             <table class="min-w-full border-collapse border border-gray-200">
-                <thead>
-                    <tr>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Gambar</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Nama Produk</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Harga</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Stok</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($products as $product)
-                        <tr>
-                            <td class="border border-gray-300 p-2">
-                                <img src="{{ asset($product->gambar) }}" alt="{{ $product->nama }}" class="w-16 h-auto">
-                            </td>
-                            <td class="border border-gray-300 p-2">{{ $product->nama }}</td>
-                            <td class="border border-gray-300 p-2">{{ number_format($product->harga, 2) }}</td>
-                            <td class="border border-gray-300 p-2">{{ $product->jumlah }}</td>
-                            <td class="border border-gray-300 p-2">
-                                <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+    <thead>
+        <tr>
+            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Nama</th>
+            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Jumlah</th>
+            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Harga</th>
+            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Gambar</th>
+            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($products as $product)
+            <tr>
+                <td class="border border-gray-300 p-2">{{ $product['nama'] }}</td>
+                <td class="border border-gray-300 p-2">{{ $product['jumlah'] }}</td>
+                <td class="border border-gray-300 p-2">{{ number_format($product['harga'], 2) }}</td>
+                <td class="border border-gray-300 p-2">
+                    <img src="data:image/jpeg;base64,{{ $product['gambar'] }}" alt="Gambar Produk" class="w-16 h-16">
+                </td>
+                <td class="border border-gray-300 p-2">
+                    <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
 
             <!-- Bagian bawah tabel dikosongkan -->
             <div class="mt-5"></div>
