@@ -1,4 +1,11 @@
-import axios from 'axios';
-window.axios = axios;
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+export default defineConfig({
+  plugins: [
+    laravel({
+      input: ['resources/css/app.css', 'resources/js/app.js'],
+      refresh: true,
+    }),
+  ],
+});
