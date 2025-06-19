@@ -2,18 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
+    protected $client;
+
+    public function __construct()
+    {
+        // Buat instance Guzzle client
+        $this->client = new Client();
+    }
+
     // Menampilkan form untuk menambah customer
     public function create()
     {
         return view('customers.create'); // Pastikan file ini ada
     }
 
-    // Menyimpan data customer ke database
+    // Menyimpan data customer ke API Django
     public function store(Request $request)
     {
         $request->validate([
@@ -22,15 +30,25 @@ class CustomerController extends Controller
             'no_telepon' => 'required|string|max:15',
         ]);
 
-        Customer::create($request->only(['nama', 'alamat', 'no_telepon']));
+        // Kirim data ke API Django
+        $response = $this->client->post('http://127.0.0.1:8000/api/kasir/customer/', [
+            'json' => $request->only(['nama', 'alamat', 'no_telepon'])
+        ]);
 
-        return redirect()->route('customers.index')->with('success', 'Customer berhasil ditambahkan!');
+        if ($response->getStatusCode() === 201) {
+            return redirect()->route('customers.index')->with('success', 'Customer berhasil ditambahkan!');
+        } else {
+            return redirect()->back()->with('error', 'Gagal menambahkan customer.');
+        }
     }
 
     // Menampilkan daftar customer
     public function index()
     {
-        $customers = Customer::all(); // Mengambil semua data customer
+        // Ambil data customer dari API Django
+        $response = $this->client->get('http://127.0.0.1:8000/api/kasir/customer/');
+        $customers = json_decode($response->getBody());
+
         return view('customers.index', compact('customers')); // Pastikan view ini ada
     }
 }

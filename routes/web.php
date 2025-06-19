@@ -9,6 +9,7 @@ use App\Http\Controllers\productsController;
 use App\Http\Controllers\expensesController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\TransactionController;
 
 
 
@@ -30,15 +31,16 @@ Route::get('/kasir', function () {
 });
 
 //rite untuk tampilan gudang
-Route::get('/gudang', function () {
-    return view('gudang'); // Mengembalikan tampilan warehouse
-});
+Route::get('/gudang', [gudangController::class, 'index'])->name('gudang.index');
 
 
 //untuk kasir
 Route::get('/kasir', [KasirController::class, 'index'])->name('kasir.index');
 Route::get('/kasir/cari', [KasirController::class, 'cariProduk'])->name('kasir.cari');
 Route::post('/kasir/checkout', [KasirController::class, 'checkout'])->name('kasir.checkout');
+Route::post('/kasir/close-transaction', [KasirController::class, 'closeTransaction'])->name('kasir.closeTransaction');
+
+
 
 // untuk gudang
 Route::get('/gudang', [GudangController::class, 'index'])->name('gudang.index');
@@ -46,14 +48,20 @@ Route::get('/gudang', [GudangController::class, 'index'])->name('gudang.index');
 // untuk products
 Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
 Route::post('/products', [ProductsController::class, 'store']);
-
 Route::get('/products/{id}', [ProductsController::class, 'show'])->name('product.show');
+Route::resource('products', ProductsController::class);
+
+
+
 
 // untuk expenses
-
-
 Route::get('/expenses', [expensesController::class, 'index'])->name('expenses.index');
 Route::post('/expenses', [expensesController::class, 'store']);
+Route::delete('/expenses/{id}', [ExpensesController::class, 'destroy'])->name('expenses.destroy');
+Route::get('/expenses/{id}/edit', [ExpensesController::class, 'edit'])->name('expenses.edit');
+Route::put('/expenses/{id}', [ExpensesController::class, 'update'])->name('expenses.update');
+
+
 
 // untuk customer
 Route::get('/customers/create', [CustomerController::class, 'create'])->name('customers.create');
@@ -78,3 +86,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
+
+//untuk transaksi
+Route::apiResource('transactions', TransactionController::class);

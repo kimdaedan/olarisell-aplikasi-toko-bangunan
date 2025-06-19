@@ -11,6 +11,12 @@
             const form = document.getElementById('addExpenseForm');
             form.classList.toggle('hidden');
         }
+
+        function confirmDelete(event) {
+            if (!confirm("Apakah Anda yakin ingin menghapus pengeluaran ini?")) {
+                event.preventDefault();
+            }
+        }
     </script>
 </head>
 <body class="bg-gray-100">
@@ -77,28 +83,33 @@
             </div>
 
             <table class="min-w-full border-collapse border border-gray-200">
-    <thead>
-        <tr>
-            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Date</th>
-            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Expense Category</th>
-            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Total Amount</th>
-            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Payment Status</th>
-            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($expenses as $expense)
-            <tr>
-                <td class="border border-gray-300 p-2">{{ $expense->date }}</td>
-                <td class="border border-gray-300 p-2">{{ $expense->category }}</td>
-                <td class="border border-gray-300 p-2">{{ number_format($expense->amount, 2) }}</td>
-                <td class="border border-gray-300 p-2">{{ $expense->payment_status }}</td>
-                <td class="border border-gray-300 p-2">
-                    <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
-                </td>
-            </tr>
-        @endforeach
-    </tbody>
+                <thead>
+                    <tr>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Date</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Expense Category</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Total Amount</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Payment Status</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($expenses as $expense)
+                        <tr>
+                            <td class="border border-gray-300 p-2">{{ $expense->date }}</td>
+                            <td class="border border-gray-300 p-2">{{ $expense->category }}</td>
+                            <td class="border border-gray-300 p-2">{{ number_format($expense->amount, 2) }}</td>
+                            <td class="border border-gray-300 p-2">{{ $expense->payment_status }}</td>
+                            <td class="border border-gray-300 p-2">
+                                <form action="{{ url('/expenses/' . $expense->id) }}" method="POST" onsubmit="confirmDelete(event);">
+                                    @csrf
+                                    @method('DELETE')
+                                    <a href="{{ url('/expenses/' . $expense->id . '/edit') }}" class="bg-blue-500 text-white px-4 py-1 rounded">Edit</a>
+                                    <button type="submit" class="bg-red-500 text-white px-4 py-1 rounded ml-2">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
 
             <!-- Bagian bawah tabel dikosongkan -->

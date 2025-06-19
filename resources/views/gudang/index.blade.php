@@ -11,7 +11,7 @@
 
     <div class="flex">
         <nav class="w-64 bg-blue-500 text-white p-5">
-            <img src="logo.png" alt="Logo" class="max-w-full h-auto mb-4"> <!-- Ganti dengan URL logo Anda -->
+            <img src="logo.png" alt="Logo" class="max-w-full h-auto mb-4">
             <a href="/gudang" class="block py-2 hover:bg-blue-600">Sell</a>
             <a href="/products" class="block py-2 hover:bg-blue-600">Products</a>
             <a href="/expenses" class="block py-2 hover:bg-blue-600">Expenses</a>
@@ -20,7 +20,7 @@
         <div class="flex-1 p-5">
             <div class="flex justify-between items-center mb-4">
                 <h1 class="text-2xl font-bold">POS</h1>
-                <a href="/kasir" class="bg-green-500 text-white px-4 py-2 rounded">Kasir</a> <!-- Tombol Kasir -->
+                <a href="/kasir" class="bg-green-500 text-white px-4 py-2 rounded">Kasir</a>
             </div>
             <div class="flex justify-between items-center mb-4">
                 <span>Show
@@ -46,46 +46,22 @@
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Customer Name</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Contact Number</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Location</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Payment Status</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Payment Method</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Total Amount</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Total</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($transactions as $transaction)
                     <tr>
                         <td class="border border-gray-300 p-2"><button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button></td>
-                        <td class="border border-gray-300 p-2">14/04/2025 09:17</td>
-                        <td class="border border-gray-300 p-2">LISA - MEDITERANIA</td>
-                        <td class="border border-gray-300 p-2">8756454</td>
-                        <td class="border border-gray-300 p-2">Toko Bangunan 1</td>
-                        <td class="border border-gray-300 p-2">Paid</td>
-                        <td class="border border-gray-300 p-2">Cash</td>
-                        <td class="border border-gray-300 p-2">Rp 760,000.00</td>
-                        <td class="border border-gray-300 p-2">Rp 760,000.00</td>
+                        <td class="border border-gray-300 p-2">{{ $transaction->payment_date }}</td>
+                        <td class="border border-gray-300 p-2">{{ $transaction->customer_name }}</td>
+                        <td class="border border-gray-300 p-2">{{ $transaction->contact_number }}</td>
+                        <td class="border border-gray-300 p-2">{{ $transaction->location }}</td>
+                        <td class="border border-gray-300 p-2">{{ $transaction->payment_method }}</td>
+                        <td class="border border-gray-300 p-2">Rp {{ number_format($transaction->total, 2, ',', '.') }}</td>
                     </tr>
-                    <tr>
-                        <td class="border border-gray-300 p-2"><button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button></td>
-                        <td class="border border-gray-300 p-2">13/04/2025 09:14</td>
-                        <td class="border border-gray-300 p-2">MEDI - CENTRAL RESIDENT</td>
-                        <td class="border border-gray-300 p-2">8765</td>
-                        <td class="border border-gray-300 p-2">Toko Bangunan 1</td>
-                        <td class="border border-gray-300 p-2">Paid</td>
-                        <td class="border border-gray-300 p-2">CashI</td>
-                        <td class="border border-gray-300 p-2">Rp 2,450,000.00</td>
-                        <td class="border border-gray-300 p-2">Rp 2,450,000.00</td>
-                    </tr>
-                    <tr>
-                        <td class="border border-gray-300 p-2"><button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button></td>
-                        <td class="border border-gray-300 p-2">12/04/2025 16:16</td>
-                        <td class="border border-gray-300 p-2">Budi - Valley Park</td>
-                        <td class="border border-gray-300 p-2">082391247858</td>
-                        <td class="border border-gray-300 p-2">Toko Bangunan 1</td>
-                        <td class="border border-gray-300 p-2">Paid</td>
-                        <td class="border border-gray-300 p-2">Cash</td>
-                        <td class="border border-gray-300 p-2">Rp 1,960,000.00</td>
-                        <td class="border border-gray-300 p-2">Rp 1,960,000.00</td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
