@@ -19,6 +19,10 @@
         </form>
         <a href="{{ route('customers.create') }}" class="bg-white text-blue-600 px-4 py-2 rounded">Tambah Data Customer</a>
         <a href="{{ route('gudang.index') }}" class="bg-white text-blue-600 px-4 py-2 rounded ml-2">Gudang</a>
+        <form action="{{ route('logout') }}" method="POST" class="inline">
+    @csrf
+    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded ml-2">Logout</button>
+</form>
     </div>
     <img src="user.png" alt="Pengguna" class="h-10">
 </header>
@@ -30,7 +34,7 @@
             @foreach($produk as $item)
                 <li>
                     <a href="#" class="flex items-center mb-4 border-b border-gray-300 pb-2" onclick="addProduct('{{ $item->nama }}', {{ $item->harga }})">
-                        <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama }}" class="h-20 w-20 object-cover mr-4">
+                        <img src="{{ $item->gambar }}" alt="{{ $item->nama }}" class="h-20 w-20 object-cover mr-4">
                         <div class="flex-1">
                             <div class="font-semibold">{{ $item->nama }}</div>
                             <div class="text-gray-700">Harga: Rp {{ number_format($item->harga, 0, ',', '.') }}</div>
@@ -50,52 +54,54 @@
         <div class="mb-4">
             <label for="customer_name" class="block text-sm font-medium text-gray-700">Pilih Customer</label>
             <select id="customer_name" name="customer_id" class="mt-1 block w-full p-2 border border-gray-300 rounded select2">
-                <option value="">Pilih Customer</option>
-                @foreach($customers as $customer)
-                    <option value="{{ $customer->id }}">{{ $customer->nama }}</option>
-                @endforeach
-            </select>
+    <option value="">Pilih Customer</option>
+    @foreach($customers as $customer)
+        <option value="{{ $customer->id }}">{{ $customer->nama }}</option>
+    @endforeach
+</select>
         </div>
 
-        <!-- Kolom untuk Metode Pembayaran -->
         <div class="mb-4">
             <label for="payment_method" class="block text-sm font-medium text-gray-700">Metode Pembayaran</label>
             <input type="text" id="payment_method" name="payment_method" placeholder="Masukkan Metode Pembayaran" class="mt-1 block w-full p-2 border border-gray-300 rounded">
         </div>
 
-        <!-- Kolom untuk Tanggal -->
         <div class="mb-4">
             <label for="payment_date" class="block text-sm font-medium text-gray-700">Tanggal</label>
             <input type="date" id="payment_date" name="payment_date" class="mt-1 block w-full p-2 border border-gray-300 rounded" value="{{ date('Y-m-d') }}" readonly>
         </div>
 
-        <script>
-        $(document).ready(function() {
-            $('.select2').select2({
-                placeholder: 'Pilih Customer',
-                allowClear: true
-            });
+        <p id="total-price" class="mt-4 text-xl font-bold">Total: Rp 0</p>
+        <button id="submit-transaction" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Closing</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            placeholder: 'Pilih Customer',
+            allowClear: true
         });
 
         const products = {};
 
-        function addProduct(name, price) {
+        window.addProduct = function(name, price) {
             if (!products[name]) {
                 products[name] = { price: price, quantity: 1 };
             } else {
                 products[name].quantity++;
             }
             renderProducts();
-        }
+        };
 
         function renderProducts() {
             $('#selected-products').empty();
-            let totalPrice = 0; // Inisialisasi total harga
+            let totalPrice = 0;
 
             for (const name in products) {
                 const { price, quantity } = products[name];
-                const productTotal = price * quantity; // Hitung total untuk produk ini
-                totalPrice += productTotal; // Tambahkan ke total harga
+                const productTotal = price * quantity;
+                totalPrice += productTotal;
 
                 const productHtml = `
                     <div class="flex justify-between items-center border-b border-gray-300 py-2">
@@ -112,30 +118,28 @@
                 $('#selected-products').append(productHtml);
             }
 
-            // Tampilkan total harga di bagian Closing
             $('#total-price').text(`Total: Rp ${totalPrice.toLocaleString()}`);
         }
 
-        function increment(name) {
+        window.increment = function(name) {
             products[name].quantity++;
             renderProducts();
-        }
+        };
 
-        function decrement(name) {
+        window.decrement = function(name) {
             if (products[name].quantity > 1) {
                 products[name].quantity--;
             } else {
                 removeProduct(name);
             }
             renderProducts();
-        }
+        };
 
-        function removeProduct(name) {
+        window.removeProduct = function(name) {
             delete products[name];
             renderProducts();
-        }
+        };
 
-        // Tambahkan event listener untuk pencarian
         $('input[name="search"]').on('input', function() {
             const searchTerm = $(this).val().toLowerCase();
             $('#product-list li').each(function() {
@@ -143,12 +147,42 @@
                 $(this).toggle(productName.includes(searchTerm));
             });
         });
-        </script>
 
-        <p id="total-price" class="mt-4 text-xl font-bold">Total: Rp 0</p>
-        <button id="submit-transaction" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Closing</button>
+        $('#submit-transaction').click(function() {
+            const selectedProducts = Object.keys(products).map(name => ({
+                name: name,
+                quantity: products[name].quantity,
+                price: products[name].price
+            }));
 
+            const customerId = $('#customer_name').val();
+            const paymentMethod = $('#payment_method').val();
+            const paymentDate = $('#payment_date').val();
 
+            $.ajax({
+                url: '{{ route("kasir.closeTransaction") }}',
+                method: 'POST',
+                data: {
+                    customer_id: customerId,
+                    products: selectedProducts,
+                    payment_method: paymentMethod,
+                    payment_date: paymentDate,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    alert('Transaksi berhasil ditutup!');
+                    // Reset data setelah berhasil
+                    products = {};
+                    $('#selected-products').empty();
+                    $('#total-price').text('Total: Rp 0');
+                },
+                error: function(xhr) {
+                    alert('Terjadi kesalahan: ' + xhr.responseJSON.message);
+                }
+            });
+        });
+    });
+</script>
 
 </body>
 </html>
