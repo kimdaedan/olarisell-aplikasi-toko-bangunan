@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
     use HasFactory;
 
-    protected $table = 'gudang_produk'; // Jika tabel Anda bernama 'gudang_produk'
+    protected $table = 'gudang_produk'; // Nama tabel sesuai dengan yang ada di database
 
     protected $fillable = [
         'nama',
