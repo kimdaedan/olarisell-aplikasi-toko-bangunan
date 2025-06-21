@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product; // Model untuk produk
 use App\Models\Customer; // Model untuk customer
+use App\Models\KasirTransaksi; // Model untuk menyimpan transaksi
 use Illuminate\Http\Request;
 use GuzzleHttp\Client; // Pastikan untuk menggunakan GuzzleHttp
 
@@ -41,35 +42,42 @@ class KasirController extends Controller
     protected function getCustomers()
     {
         // Ambil customer dari API
-    $response = $this->client->get('http://127.0.0.1:8000/api/kasir/customer/');
-    return json_decode($response->getBody()); // Mengembalikan objek
+        $response = $this->client->get('http://127.0.0.1:8000/api/kasir/customer/');
+        return json_decode($response->getBody()); // Mengembalikan objek
+    }
+
+     public function closeTransaction(Request $request)
+{
+    // Validasi data yang diterima
+    $request->validate([
+        'customer_id' => 'required|exists:customers,id',
+        'products' => 'required|array',
+        'payment_method' => 'required|string|max:255',
+        'payment_date' => 'required|date',
+    ]);
+
+    // Ambil nama customer dari API
+    $customer = $this->getCustomerById($request->customer_id);
+
+    // Simpan transaksi ke database
+    foreach ($request->products as $product) {
+        KasirTransaksi::create([
+            'customer_id' => $request->customer_id,
+            'customer_name' => $customer->name, // Simpan nama customer
+            'product_name' => $product['name'],
+            'quantity' => $product['quantity'],
+            'price' => $product['price'],
+            'payment_method' => $request->payment_method,
+            'payment_date' => $request->payment_date,
+        ]);
+    }
+
+    return response()->json(['success' => 'Transaksi berhasil disimpan.']);
 }
 
-    public function closeTransaction(Request $request)
-    {
-        // Validasi data yang diterima
-        $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'products' => 'required|array',
-            'payment_method' => 'required|string|max:255',
-            'payment_date' => 'required|date',
-        ]);
-
-        // Simpan transaksi ke gudang
-        foreach ($request->products as $product) {
-            // Kirim data ke API Django untuk memindahkan produk ke gudang
-            $this->client->post('http://127.0.0.1:8000/api/gudang/produk/', [
-                'json' => [
-                    'nama' => $product['name'],
-                    'jumlah' => $product['quantity'],
-                    'harga' => $product['price'],
-                    'customer_id' => $request->customer_id,
-                    'payment_method' => $request->payment_method,
-                    'payment_date' => $request->payment_date,
-                ]
-            ]);
-        }
-
-        return response()->json(['success' => 'Transaksi berhasil dipindahkan.']);
-    }
+protected function getCustomerById($id)
+{
+    $response = $this->client->get("http://127.0.0.1:8000/api/kasir/customer/{$id}/");
+    return json_decode($response->getBody()); // Mengembalikan objek customer
+}
 }

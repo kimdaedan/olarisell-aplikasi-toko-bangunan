@@ -44,8 +44,6 @@
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Action</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Date</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Customer Name</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Contact Number</th>
-                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Location</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Payment Method</th>
                         <th class="border border-gray-300 p-2 bg-blue-500 text-white">Total</th>
                     </tr>
@@ -53,11 +51,11 @@
                 <tbody>
                     @foreach($transactions as $transaction)
                     <tr>
-                        <td class="border border-gray-300 p-2"><button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button></td>
+                        <td class="border border-gray-300 p-2">
+                            <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
+                        </td>
                         <td class="border border-gray-300 p-2">{{ $transaction->payment_date }}</td>
                         <td class="border border-gray-300 p-2">{{ $transaction->customer_name }}</td>
-                        <td class="border border-gray-300 p-2">{{ $transaction->contact_number }}</td>
-                        <td class="border border-gray-300 p-2">{{ $transaction->location }}</td>
                         <td class="border border-gray-300 p-2">{{ $transaction->payment_method }}</td>
                         <td class="border border-gray-300 p-2">Rp {{ number_format($transaction->total, 2, ',', '.') }}</td>
                     </tr>
