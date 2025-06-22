@@ -176,11 +176,10 @@
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
-                    alert('Transaksi berhasil ditutup!');
-                    // Reset data setelah berhasil
-                    products = {};
-                    $('#selected-products').empty();
-                    $('#total-price').text('Total: Rp 0');
+                    alert(response.message);
+                    if (response.refresh) {
+                        location.reload(); // Refresh halaman
+                    }
                 },
                 error: function(xhr) {
                     alert('Terjadi kesalahan: ' + xhr.responseJSON.message);
