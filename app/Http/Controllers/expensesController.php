@@ -6,6 +6,7 @@ use App\Models\Expenses; // Pastikan model ini ada
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class ExpensesController extends Controller
 {
@@ -77,6 +78,17 @@ class ExpensesController extends Controller
         return view('expenses.edit', compact('expense'));
     }
 
+    public function exportToPDF()
+{
+    $expenses = Expenses::all(); // Ambil data pengeluaran
+
+    // Buat PDF
+    $pdf = PDF::loadView('expenses.pdf', compact('expenses'));
+
+    // Kembalikan PDF sebagai response
+    return $pdf->download('expenses.pdf');
+}
+
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -91,14 +103,15 @@ class ExpensesController extends Controller
 
         // Mengupdate pengeluaran di Django
         try {
-        $response = $client->put('http://127.0.0.1:8000/api/gudang/pengeluaran/' . $id . '/', [
-            'json' => [
-                'date' => $request->date,
-                'category' => $request->category,
-                'amount' => $request->amount,
-                'payment_status' => $request->status,
-            ]
-        ]);
+            $response = $client->put('http://127.0.0.1:8000/api/gudang/pengeluaran/' . $id . '/', [
+                'json' => [
+                    'date' => $request->date,
+                    'category' => $request->category,
+                    'amount' => $request->amount,
+                    'payment_status' => $request->status,
+                ]
+            ]);
+
             // Cek status response
             if ($response->getStatusCode() === 200) {
                 return redirect()->route('expenses.index')->with('success', 'Pengeluaran berhasil diperbarui.');

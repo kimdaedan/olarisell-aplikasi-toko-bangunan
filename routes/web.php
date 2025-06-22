@@ -9,7 +9,7 @@ use App\Http\Controllers\productsController;
 use App\Http\Controllers\expensesController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\TransactionController;
+//use App\Http\Controllers\TransactionController;
 
 
 
@@ -60,6 +60,7 @@ Route::post('/expenses', [expensesController::class, 'store']);
 Route::delete('/expenses/{id}', [ExpensesController::class, 'destroy'])->name('expenses.destroy');
 Route::get('/expenses/{id}/edit', [ExpensesController::class, 'edit'])->name('expenses.edit');
 Route::put('/expenses/{id}', [ExpensesController::class, 'update'])->name('expenses.update');
+Route::get('/expenses/export-pdf', [ExpensesController::class, 'exportToPDF'])->name('expenses.exportPdf');
 
 
 

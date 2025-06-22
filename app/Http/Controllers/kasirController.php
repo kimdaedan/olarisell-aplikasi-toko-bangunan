@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product; // Model untuk produk
-use App\Models\Customer; // Model untuk customer
-use App\Models\KasirTransaksi; // Model untuk menyimpan transaksi
+use App\Models\TransaksiDetail; // Model untuk menyimpan detail transaksi
 use Illuminate\Http\Request;
 use GuzzleHttp\Client; // Pastikan untuk menggunakan GuzzleHttp
 
@@ -34,7 +32,7 @@ class KasirController extends Controller
         }
 
         // Ambil semua customer dari API
-        $customers = $this->getCustomers(); // Mengambil data customer dari API
+        $customers = $this->getCustomers();
 
         return view('kasir.index', compact('produk', 'customers'));
     }
@@ -46,38 +44,41 @@ class KasirController extends Controller
         return json_decode($response->getBody()); // Mengembalikan objek
     }
 
-     public function closeTransaction(Request $request)
-{
-    // Validasi data yang diterima
-    $request->validate([
-        'customer_id' => 'required|exists:customers,id',
-        'products' => 'required|array',
-        'payment_method' => 'required|string|max:255',
-        'payment_date' => 'required|date',
-    ]);
-
-    // Ambil nama customer dari API
-    $customer = $this->getCustomerById($request->customer_id);
-
-    // Simpan transaksi ke database
-    foreach ($request->products as $product) {
-        KasirTransaksi::create([
-            'customer_id' => $request->customer_id,
-            'customer_name' => $customer->name, // Simpan nama customer
-            'product_name' => $product['name'],
-            'quantity' => $product['quantity'],
-            'price' => $product['price'],
-            'payment_method' => $request->payment_method,
-            'payment_date' => $request->payment_date,
+    public function closeTransaction(Request $request)
+    {
+        // Validasi data yang diterima
+        $request->validate([
+            'customer_id' => 'required|integer|exists:kasir_customer,id', // Validasi ID customer
+            'products' => 'required|array',
+            'payment_method' => 'required|string|max:255',
+            'payment_date' => 'required|date',
         ]);
+
+        // Hitung total pembayaran dari produk yang dipilih
+        $total = 0;
+        foreach ($request->products as $product) {
+            $total += $product['price'] * $product['quantity'];
+        }
+
+        // Simpan detail transaksi di tabel transaksi_detail
+        foreach ($request->products as $product) {
+            $detail = new TransaksiDetail();
+            $detail->customer_id = $request->customer_id;
+            $detail->product_name = $product['name'];
+            $detail->quantity = $product['quantity'];
+            $detail->price = $product['price'];
+            $detail->total = $product['price'] * $product['quantity'];
+            $detail->payment_method = $request->payment_method;
+            $detail->payment_date = $request->payment_date;
+            $detail->save();
+        }
+
+        return response()->json(['message' => 'Transaksi berhasil ditutup!']);
     }
 
-    return response()->json(['success' => 'Transaksi berhasil disimpan.']);
-}
-
-protected function getCustomerById($id)
-{
-    $response = $this->client->get("http://127.0.0.1:8000/api/kasir/customer/{$id}/");
-    return json_decode($response->getBody()); // Mengembalikan objek customer
-}
+    protected function getCustomerById($id)
+    {
+        $response = $this->client->get("http://127.0.0.1:8000/api/kasir/customer/{$id}/");
+        return json_decode($response->getBody()); // Mengembalikan objek customer
+    }
 }

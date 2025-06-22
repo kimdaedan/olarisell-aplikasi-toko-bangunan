@@ -19,6 +19,10 @@
         </form>
         <a href="{{ route('customers.create') }}" class="bg-white text-blue-600 px-4 py-2 rounded">Tambah Data Customer</a>
         <a href="{{ route('gudang.index') }}" class="bg-white text-blue-600 px-4 py-2 rounded ml-2">Gudang</a>
+        <form action="{{ route('logout') }}" method="POST" class="inline">
+    @csrf
+    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded ml-2">Logout</button>
+</form>
     </div>
     <img src="user.png" alt="Pengguna" class="h-10">
 </header>
@@ -58,9 +62,15 @@
         </div>
 
         <div class="mb-4">
-            <label for="payment_method" class="block text-sm font-medium text-gray-700">Metode Pembayaran</label>
-            <input type="text" id="payment_method" name="payment_method" placeholder="Masukkan Metode Pembayaran" class="mt-1 block w-full p-2 border border-gray-300 rounded">
-        </div>
+    <label for="payment_method" class="block text-sm font-medium text-gray-700">Metode Pembayaran</label>
+    <select id="payment_method" name="payment_method" class="mt-1 block w-full p-2 border border-gray-300 rounded">
+        <option value="">Pilih Metode Pembayaran</option>
+        <option value="cash">Cash</option>
+        <option value="debit_bca">Debit BCA</option>
+        <option value="debit_mandiri">Debit Mandiri</option>
+        <option value="qris">QRIS</option>
+    </select>
+</div>
 
         <div class="mb-4">
             <label for="payment_date" class="block text-sm font-medium text-gray-700">Tanggal</label>
