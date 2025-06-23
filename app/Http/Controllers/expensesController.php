@@ -78,16 +78,32 @@ class ExpensesController extends Controller
         return view('expenses.edit', compact('expense'));
     }
 
-    public function exportToPDF()
+   public function exportPdf()
 {
-    $expenses = Expenses::all(); // Ambil data pengeluaran
+    // Buat instance Guzzle client
+    $client = new Client();
 
-    // Buat PDF
-    $pdf = PDF::loadView('expenses.pdf', compact('expenses'));
+    try {
+        // Ambil data pengeluaran dari API Django
+        $response = $client->get('http://127.0.0.1:8000/api/gudang/pengeluaran/');
 
-    // Kembalikan PDF sebagai response
-    return $pdf->download('expenses.pdf');
+        if ($response->getStatusCode() === 200) {
+            $expenses = json_decode($response->getBody()->getContents(), true); // Mengambil data sebagai array
+
+            // Buat PDF dari view
+            $pdf = PDF::loadView('expenses.pdf', compact('expenses'));
+
+            // Unduh file PDF
+            return $pdf->download('expenses.pdf');
+        } else {
+            return redirect()->route('expenses.index')->with('error', 'Gagal mengambil data pengeluaran dari Django.');
+        }
+    } catch (\Exception $e) {
+        Log::error('Gagal menghubungi API Django saat mengekspor PDF: ' . $e->getMessage());
+        return redirect()->route('expenses.index')->with('error', 'Gagal menghubungi API Django.');
+    }
 }
+
 
     public function update(Request $request, $id)
     {

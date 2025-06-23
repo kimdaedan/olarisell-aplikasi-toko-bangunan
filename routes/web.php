@@ -60,7 +60,7 @@ Route::post('/expenses', [expensesController::class, 'store']);
 Route::delete('/expenses/{id}', [ExpensesController::class, 'destroy'])->name('expenses.destroy');
 Route::get('/expenses/{id}/edit', [ExpensesController::class, 'edit'])->name('expenses.edit');
 Route::put('/expenses/{id}', [ExpensesController::class, 'update'])->name('expenses.update');
-Route::get('/expenses/export-pdf', [ExpensesController::class, 'exportToPDF'])->name('expenses.exportPdf');
+Route::get('/expenses/exportPdf', [ExpensesController::class, 'exportPdf'])->name('expenses.exportPdf');
 
 
 
