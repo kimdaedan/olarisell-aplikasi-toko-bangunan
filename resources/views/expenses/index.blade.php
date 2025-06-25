@@ -47,9 +47,9 @@
                     entries
                 </span>
                 <div>
-                    <a href="{{ route('expenses.exportexcel') }}" class="btn btn-success">Export to Excel</a>
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded">Export Excel</button>
                     <button class="bg-blue-500 text-white px-4 py-2 rounded">Print</button>
-                    <a href="{{ route('expenses.exportPdf') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Export PDF</a>
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded">Export PDF</button>
                 </div>
             </div>
 

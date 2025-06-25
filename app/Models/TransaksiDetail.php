@@ -9,7 +9,7 @@ class TransaksiDetail extends Model
 {
     use HasFactory;
 
-    protected $table = 'transaksi_detail'; // Pastikan ini sesuai nama tabel
+    protected $table = 'transaksi_detail';
 
     protected $fillable = [
         'customer_id',
@@ -20,4 +20,9 @@ class TransaksiDetail extends Model
         'payment_method',
         'payment_date',
     ];
+
+    public function kasirCustomer()
+    {
+        return $this->belongsTo(Customer::class, 'id'); // Pastikan ini sesuai
+    }
 }
