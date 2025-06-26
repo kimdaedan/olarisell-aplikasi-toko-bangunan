@@ -39,33 +39,33 @@
             </div>
 
             <table class="min-w-full border-collapse border border-gray-200">
-    <thead>
-        <tr>
-            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Action</th>
-            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Date</th>
-            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Customer Name</th>
-            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Product Name</th>
-            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Quantity</th>
-            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Payment Method</th>
-            <th class="border border-gray-300 p-2 bg-blue-500 text-white">Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($transactions as $transaction)
-        <tr>
-            <td class="border border-gray-300 p-2">
-                <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
-            </td>
-            <td class="border border-gray-300 p-2">{{ $transaction->payment_date }}</td>
-            <td class="border border-gray-300 p-2">{{ $transaction->kasirCustomer ? $transaction->kasirCustomer->name : 'Unknown' }}</td>
-            <td class="border border-gray-300 p-2">{{ $transaction->product_name }}</td>
-            <td class="border border-gray-300 p-2">{{ $transaction->quantity }}</td>
-            <td class="border border-gray-300 p-2">{{ $transaction->payment_method }}</td>
-            <td class="border border-gray-300 p-2">Rp {{ number_format($transaction->total, 2, ',', '.') }}</td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
+                <thead>
+                    <tr>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Action</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Date</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Customer Name</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Product Name</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Quantity</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Payment Method</th>
+                        <th class="border border-gray-300 p-2 bg-blue-500 text-white">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+    @foreach($transactions as $transaction)
+    <tr>
+        <td class="border border-gray-300 p-2">
+            <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
+        </td>
+        <td class="border border-gray-300 p-2">{{ $transaction->tanggal }}</td> <!-- Tanggal transaksi -->
+        <td class="border border-gray-300 p-2">{{ $transaction->customer_name }}</td> <!-- Nama customer -->
+        <td class="border border-gray-300 p-2">{{ $transaction->product_name }}</td> <!-- Nama produk -->
+        <td class="border border-gray-300 p-2">{{ $transaction->qty }}</td> <!-- Jumlah -->
+        <td class="border border-gray-300 p-2">{{ $transaction->payment_method }}</td> <!-- Metode pembayaran -->
+        <td class="border border-gray-300 p-2">Rp {{ number_format($transaction->total_transaksi, 2, ',', '.') }}</td> <!-- Total transaksi -->
+    </tr>
+    @endforeach
+</tbody>
+            </table>
         </div>
     </div>
 </body>

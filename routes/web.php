@@ -31,15 +31,14 @@ Route::get('/kasir', function () {
 });
 
 //rite untuk tampilan gudang
-Route::get('/gudang', [gudangController::class, 'index'])->name('gudang.index');
+Route::get('/gudang', [GudangController::class, 'index'])->name('gudang.index');
 
 
 //untuk kasir
 Route::get('/kasir', [KasirController::class, 'index'])->name('kasir.index');
 Route::get('/kasir/cari', [KasirController::class, 'cariProduk'])->name('kasir.cari');
-Route::post('/kasir/checkout', [KasirController::class, 'checkout'])->name('kasir.checkout');
-Route::post('/kasir/close-transaction', [KasirController::class, 'closeTransaction'])->name('kasir.closeTransaction');
-
+//Route::post('/kasir', [KasirController::class, 'handleKasir'])->name('kasir.handle');
+Route::post('/kasir/closing', [KasirController::class, 'closeTransaction'])->name('api.kasir.closeTransaction');
 
 
 // untuk gudang

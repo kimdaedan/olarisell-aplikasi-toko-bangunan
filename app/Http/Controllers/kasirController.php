@@ -43,39 +43,60 @@ class KasirController extends Controller
         $response = $this->client->get('http://127.0.0.1:8000/api/kasir/customer/');
         return json_decode($response->getBody()); // Mengembalikan objek
     }
-
-    public function closeTransaction(Request $request)
+    public function handleKasir(Request $request)
     {
-        // Validasi data yang diterima
-        $request->validate([
-            'customer_id' => 'required|integer|exists:kasir_customer,id', // Validasi ID customer
+        // Validasi data
+        $validatedData = $request->validate([
+            'customer_id' => 'required|integer',
             'products' => 'required|array',
-            'payment_method' => 'required|string|max:255',
+            'payment_method' => 'required|string',
             'payment_date' => 'required|date',
         ]);
-
-        // Hitung total pembayaran dari produk yang dipilih
-        $total = 0;
-        foreach ($request->products as $product) {
-            $total += $product['price'] * $product['quantity'];
-        }
-
-        // Simpan detail transaksi di tabel transaksi_detail
-        foreach ($request->products as $product) {
-            $detail = new TransaksiDetail();
-            $detail->customer_id = $request->customer_id;
-            $detail->product_name = $product['name'];
-            $detail->quantity = $product['quantity'];
-            $detail->price = $product['price'];
-            $detail->total = $product['price'] * $product['quantity'];
-            $detail->payment_method = $request->payment_method;
-            $detail->payment_date = $request->payment_date;
-            $detail->save();
-        }
-
-        return response()->json(['message' => 'Transaksi berhasil ditutup!']);
     }
 
+    public function closeTransaction(Request $request)
+{
+    // Validasi data yang diterima
+    $request->validate([
+        'customer_id' => 'required|integer|exists:kasir_customer,id', // Validasi ID customer
+        'products' => 'required|array',
+        'payment_method' => 'required|string|max:255',
+        'payment_date' => 'required|date',
+    ]);
+
+    // Hitung total pembayaran dari produk yang dipilih
+    $total = 0;
+    foreach ($request->products as $product) {
+        $total += $product['price'] * $product['quantity'];
+    }
+
+    // Memastikan ada produk sebelum mengakses id
+    if (empty($request->products) || !isset($request->products[0]['id'])) {
+        return response()->json(['message' => 'Produk tidak ditemukan.'], 400);
+    }
+
+    // Mempersiapkan data untuk dikirim ke API closing
+    $closingData = [
+        'customer_id' => $request->customer_id,
+        'produk_id' => $request->products[0]['id'], // Ambil produk ID dari produk pertama
+        'qty' => array_sum(array_column($request->products, 'quantity')), // Total qty
+        'payment_method' => $request->payment_method,
+        'total_transaksi' => $total,
+        'tanggal' => now(), // Menambahkan tanggal saat ini
+    ];
+
+    // Kirim data ke API closing
+    $response = $this->client->post('http://127.0.0.1:8000/api/kasir/closing/', [
+        'json' => $closingData,
+    ]);
+
+    // Periksa respons dari API
+    if ($response->getStatusCode() !== 201) {
+        return response()->json(['message' => 'Gagal menutup transaksi di API closing.'], 500);
+    }
+
+    return response()->json(['message' => 'Transaksi berhasil ditutup!']);
+}
     protected function getCustomerById($id)
     {
         $response = $this->client->get("http://127.0.0.1:8000/api/kasir/customer/{$id}/");
