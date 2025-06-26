@@ -12,10 +12,5 @@ class Product extends Model
 
     protected $table = 'gudang_produk'; // Nama tabel sesuai dengan yang ada di database
 
-    protected $fillable = [
-        'nama',
-        'jumlah',
-        'harga',
-        'gambar',
-    ];
+    protected $fillable = ['name'];
 }

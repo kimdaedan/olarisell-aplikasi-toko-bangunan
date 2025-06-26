@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-100">
 
     <div class="flex">
@@ -51,22 +53,23 @@
                     </tr>
                 </thead>
                 <tbody>
-    @foreach($transactions as $transaction)
-    <tr>
-        <td class="border border-gray-300 p-2">
-            <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
-        </td>
-        <td class="border border-gray-300 p-2">{{ $transaction->tanggal }}</td> <!-- Tanggal transaksi -->
-        <td class="border border-gray-300 p-2">{{ $transaction->customer_name }}</td> <!-- Nama customer -->
-        <td class="border border-gray-300 p-2">{{ $transaction->product_name }}</td> <!-- Nama produk -->
-        <td class="border border-gray-300 p-2">{{ $transaction->qty }}</td> <!-- Jumlah -->
-        <td class="border border-gray-300 p-2">{{ $transaction->payment_method }}</td> <!-- Metode pembayaran -->
-        <td class="border border-gray-300 p-2">Rp {{ number_format($transaction->total_transaksi, 2, ',', '.') }}</td> <!-- Total transaksi -->
-    </tr>
-    @endforeach
-</tbody>
+                    @foreach($transactions as $transaction)
+                    <tr>
+                        <td class="border border-gray-300 p-2">
+                            <button class="bg-blue-500 text-white px-4 py-1 rounded">Actions</button>
+                        </td>
+                        <td class="border border-gray-300 p-2">{{ $transaction->tanggal }}</td>
+                        <td class="border border-gray-300 p-2">{{ $transaction->customer_name }}</td> <!-- Nama customer -->
+                        <td class="border border-gray-300 p-2">{{ $transaction->product_name }}</td> <!-- Nama produk -->
+                        <td class="border border-gray-300 p-2">{{ $transaction->qty }}</td>
+                        <td class="border border-gray-300 p-2">{{ $transaction->payment_method }}</td>
+                        <td class="border border-gray-300 p-2">Rp {{ number_format($transaction->total_transaksi, 2, ',', '.') }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
     </div>
 </body>
+
 </html>

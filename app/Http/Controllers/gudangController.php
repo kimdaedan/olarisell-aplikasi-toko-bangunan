@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
-use App\Models\Customer; // Pastikan ini diimpor
-use App\Models\Product;  // Pastikan ini diimpor
+use App\Models\Customer;
+use App\Models\Product;
 
 class GudangController extends Controller
 {
@@ -18,10 +18,13 @@ class GudangController extends Controller
             $response = $client->get('http://127.0.0.1:8000/api/kasir/closing/');
             $transactions = json_decode($response->getBody()->getContents());
 
-            foreach ($transactions as $transaction) {
-                // Ambil nama customer dan produk
-                $transaction->customer_name = $this->getCustomerName($transaction->customer);
-                $transaction->product_name = $this->getProductName($transaction->produk);
+            // Pastikan transaksi adalah array
+            if (is_array($transactions)) {
+                foreach ($transactions as $transaction) {
+                    // Ambil nama customer dan produk
+                    $transaction->customer_name = $this->getCustomerName($transaction->customer);
+                    $transaction->product_name = $this->getProductName($transaction->produk);
+                }
             }
 
             return view('gudang.index', compact('transactions'));
@@ -34,12 +37,18 @@ class GudangController extends Controller
     private function getCustomerName($customerId)
     {
         $customer = Customer::find($customerId);
+        if (!$customer) {
+            Log::warning("Customer ID {$customerId} tidak ditemukan.");
+        }
         return $customer ? $customer->name : 'Unknown';
     }
 
     private function getProductName($productId)
     {
         $product = Product::find($productId);
+        if (!$product) {
+            Log::warning("Product ID {$productId} tidak ditemukan.");
+        }
         return $product ? $product->name : 'Unknown';
     }
 }
