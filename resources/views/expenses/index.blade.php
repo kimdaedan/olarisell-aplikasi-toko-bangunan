@@ -49,8 +49,11 @@
             <a href="/products" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
                 <i class="fas fa-box-open mr-2"></i>Products
             </a>
-            <a href="/expenses" class="block py-2.5 px-4 rounded transition duration-200 bg-blue-700 font-bold">
+            <a href="/expenses" class="block py-2.5 px-4 rounded transition duration-200 bg-blue-700 font-bold font-bold">
                 <i class="fas fa-file-invoice-dollar mr-2"></i>Expenses
+            </a>
+            <a href="/customers" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700 ">
+                <i class="fas fa-users mr-2"></i>Customers
             </a>
         </nav>
 

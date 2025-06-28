@@ -43,6 +43,7 @@ Route::post('/kasir/closing', [KasirController::class, 'closeTransaction'])->nam
 
 // untuk gudang
 Route::get('/gudang', [GudangController::class, 'index'])->name('gudang.index');
+Route::resource('gudang', GudangController::class);
 
 // untuk products
 Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
@@ -63,7 +64,7 @@ Route::put('/expenses/{id}', [ExpensesController::class, 'update'])->name('expen
 
 
 // untuk customer
-Route::get('/customers/create', [CustomerController::class, 'create'])->name('customers.create');
+Route::resource('customers', CustomerController::class);
 Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
 

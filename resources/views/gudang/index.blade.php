@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLARISELL - POS</title>
+    <title>OLARISELL - Gudang</title>
     {{-- Font Awesome untuk Ikon --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     {{-- Tailwind CSS --}}
@@ -27,52 +26,49 @@
         {{-- Sidebar Navigasi --}}
         <nav class="w-64 bg-blue-600 text-white p-5 shadow-lg">
             <div class="mb-10">
-                {{-- Menggunakan logo dari file gambar di folder public --}}
                 <img src="{{ asset('logo.png') }}" alt="Logo OLARISELL" class="max-w-full h-auto mb-4 rounded">
             </div>
-            <a href="/gudang" class="block py-2.5 px-4 rounded transition duration-200 bg-blue-700 font-bold">
-                <i class="fas fa-cash-register mr-2"></i>Sell
+            <a href="{{ route('gudang.index') }}" class="block py-2.5 px-4 rounded transition duration-200 bg-blue-700 font-bold">
+                <i class="fas fa-warehouse mr-2"></i>Gudang
             </a>
-            <a href="/products" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
+            <a href="{{ route('products.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
                 <i class="fas fa-box-open mr-2"></i>Products
             </a>
-            <a href="/expenses" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
+            <a href="{{ route('expenses.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
                 <i class="fas fa-file-invoice-dollar mr-2"></i>Expenses
+            </a>
+            <a href="{{ route('customers.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
+                <i class="fas fa-users mr-2"></i>Customers
             </a>
         </nav>
 
         {{-- Konten Utama --}}
         <div class="flex-1 p-8 overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-bold text-gray-800">Point of Sale (POS)</h1>
+                <h1 class="text-3xl font-bold text-gray-800">Riwayat Transaksi</h1>
                 <a href="/kasir" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
-                    <i class="fas fa-plus mr-2"></i>Buat Transaksi
+                    <i class="fas fa-cash-register mr-2"></i>Halaman Kasir
                 </a>
             </div>
 
-            {{-- Notifikasi Error dari Controller --}}
+            {{-- Notifikasi --}}
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                </div>
+            @endif
             @if(session('error'))
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <strong class="font-bold">Error!</strong>
                     <span class="block sm:inline">{{ session('error') }}</span>
                 </div>
             @endif
 
             <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-gray-600">
-                        Show
-                        <select class="border border-gray-300 rounded p-1 mx-2">
-                            <option>25</option>
-                            <option>50</option>
-                            <option>100</option>
-                        </select>
-                        entries
-                    </span>
+                <div class="flex justify-end items-center mb-4">
                     <div>
                         <button class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded text-sm transition duration-300"><i class="fas fa-file-excel mr-1"></i> Export Excel</button>
                         <button class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded text-sm transition duration-300"><i class="fas fa-print mr-1"></i> Print</button>
-                        <button class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded text-sm transition duration-300"><i class="fas fa-file-pdf mr-1"></i> Export PDF</button>
+                        <a href="{{-- route('gudang.exportPdf') --}}" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded text-sm transition duration-300"><i class="fas fa-file-pdf mr-1"></i> Export PDF</a>
                     </div>
                 </div>
 
@@ -95,13 +91,13 @@
                             <tr class="hover:bg-gray-50 border-b border-gray-200">
                                 {{-- Kolom Action dengan Tombol Edit & Delete --}}
                                 <td class="p-3">
-                                    <div class="flex space-x-2">
+                                    <div class="flex space-x-3">
                                         {{-- Tombol Edit --}}
-                                        <a href="#" class="text-yellow-500 hover:text-yellow-700" title="Edit">
+                                        <a href="{{ route('gudang.edit', $transaction->id) }}" class="text-yellow-500 hover:text-yellow-700" title="Edit Payment Method">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         {{-- Tombol Delete (menggunakan form untuk keamanan) --}}
-                                        <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi ini?');">
+                                        <form action="{{ route('gudang.destroy', $transaction->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi ini?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-500 hover:text-red-700" title="Delete">
@@ -119,19 +115,34 @@
                                 <td class="p-3 text-gray-800 font-bold">Rp {{ number_format($transaction->total_transaksi, 0, ',', '.') }}</td>
                             </tr>
                             @empty
-                            {{-- Tampilan jika tidak ada data transaksi --}}
-                            <tr>
-                                <td colspan="7" class="text-center p-6 text-gray-500">
-                                    Tidak ada data transaksi yang ditemukan.
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td colspan="7" class="text-center p-6 text-gray-500">
+                                        Tidak ada data transaksi yang ditemukan.
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
+                        @if(isset($grandTotal))
+                        <tfoot>
+                            <tr class="bg-gray-200 font-bold">
+                                <td colspan="6" class="p-3 text-right text-gray-800">Total Keseluruhan:</td>
+                                <td class="p-3 text-gray-900">
+                                    Rp {{ number_format($grandTotal, 0, ',', '.') }}
+                                </td>
+                                <td class="p-3"></td>
+                            </tr>
+                        </tfoot>
+                        @endif
                     </table>
                 </div>
+
+                @if($transactions->hasPages())
+                <div class="mt-6">
+                    {{ $transactions->links() }}
+                </div>
+                @endif
             </div>
         </div>
     </div>
 </body>
-
 </html>
