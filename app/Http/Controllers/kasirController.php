@@ -40,7 +40,7 @@ class KasirController extends Controller
     protected function getCustomers()
     {
         // Ambil customer dari API
-        $response = $this->client->get('http://127.0.0.1:8000/api/kasir/customer/');
+        $response = $this->client->get('http://127.0.0.1:8000/api/customers/');
         return json_decode($response->getBody()); // Mengembalikan objek
     }
     public function handleKasir(Request $request)
@@ -99,7 +99,7 @@ class KasirController extends Controller
 }
     protected function getCustomerById($id)
     {
-        $response = $this->client->get("http://127.0.0.1:8000/api/kasir/customer/{$id}/");
+        $response = $this->client->get("http://127.0.0.1:8000/api/customers/{$id}/");
         return json_decode($response->getBody()); // Mengembalikan objek customer
     }
 }

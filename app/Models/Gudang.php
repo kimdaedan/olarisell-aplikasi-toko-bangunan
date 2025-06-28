@@ -27,7 +27,7 @@ class Gudang extends Model
     public static function getClosingData()
     {
         // Ambil data dari API kasir
-        $response = self::$client->get('http://127.0.0.1:8000/api/kasir/closing/');
+        $response = self::$client->get('http://127.0.0.1:8000/api/customers/');
         return json_decode($response->getBody(), true); // Mengembalikan data sebagai array
     }
 }

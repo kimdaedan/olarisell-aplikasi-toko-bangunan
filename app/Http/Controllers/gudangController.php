@@ -5,50 +5,33 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
-use App\Models\Customer;
-use App\Models\Product;
 
 class GudangController extends Controller
 {
+    /**
+     * Menampilkan daftar transaksi dari API Django.
+     */
     public function index()
     {
         $client = new Client();
+        $transactions = []; // Default value jika API gagal
 
         try {
+            // 1. Ambil data dari API Django menggunakan URL yang benar
+            // URL yang benar adalah '/api/kasir/closing/' sesuai konfigurasi urls.py di Django.
             $response = $client->get('http://127.0.0.1:8000/api/kasir/closing/');
+
+            // 2. Decode JSON dan langsung gunakan
             $transactions = json_decode($response->getBody()->getContents());
 
-            // Pastikan transaksi adalah array
-            if (is_array($transactions)) {
-                foreach ($transactions as $transaction) {
-                    // Ambil nama customer dan produk
-                    $transaction->customer_name = $this->getCustomerName($transaction->customer);
-                    $transaction->product_name = $this->getProductName($transaction->produk);
-                }
-            }
-
-            return view('gudang.index', compact('transactions'));
         } catch (\Exception $e) {
+            // Tangani error jika API tidak bisa dihubungi atau ada masalah lain
             Log::error('Gagal menghubungi API Django saat mengambil data transaksi: ' . $e->getMessage());
-            return redirect()->route('gudang.index')->with('error', 'Gagal menghubungi API Django.');
+            // Kembalikan ke halaman sebelumnya dengan pesan error
+            return back()->with('error', 'Gagal terhubung ke server data. Silakan coba lagi nanti.');
         }
-    }
 
-    private function getCustomerName($customerId)
-    {
-        $customer = Customer::find($customerId);
-        if (!$customer) {
-            Log::warning("Customer ID {$customerId} tidak ditemukan.");
-        }
-        return $customer ? $customer->name : 'Unknown';
-    }
-
-    private function getProductName($productId)
-    {
-        $product = Product::find($productId);
-        if (!$product) {
-            Log::warning("Product ID {$productId} tidak ditemukan.");
-        }
-        return $product ? $product->name : 'Unknown';
+        // 3. Kirim data yang sudah lengkap ke view
+        return view('gudang.index', compact('transactions'));
     }
 }
