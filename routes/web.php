@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SaleController;
-use App\Http\Controllers\CashierController;
 use App\Http\Controllers\kasirController;
 use App\Http\Controllers\gudangController;
 use App\Http\Controllers\productsController;
@@ -19,9 +18,29 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+//landing juga
+Route::get('/', function () {
+    return view('landing');
+})->name('landing');
+
+
+//untuk loginnya
+
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+
 // Rute untuk resource products
 
 
+
+// --- RUTE TERPROTEKSI (Harus login untuk mengakses) ---
+// Semua rute di dalam grup ini akan dijaga oleh middleware 'auth.api'
+//Route::middleware(['auth.api'])->group(function () {
+
+
+// untuk log out
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Rute untuk resource sales
 Route::resource('sales', SaleController::class);
 
@@ -74,18 +93,11 @@ Route::get('/landing', function () {
     return view('landing'); // Mengembalikan tampilan warehouse
 });
 
-//untuk loginnya
-
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 
-//landing juga
-Route::get('/', function () {
-    return view('landing');
-})->name('landing');
 
 //untuk transaksi
-Route::apiResource('transactions', TransactionController::class);
+//Route::apiResource('transactions', TransactionController::class);
+
+//});
