@@ -11,7 +11,21 @@
     <div class="flex h-screen">
         {{-- Sidebar Navigasi --}}
         <nav class="w-64 bg-blue-600 text-white p-5 shadow-lg">
-            {{-- ... (Kode sidebar Anda) ... --}}
+            <div class="mb-10">
+                <img src="{{ asset('logo.png') }}" alt="Logo OLARISELL" class="max-w-full h-auto mb-4 rounded">
+            </div>
+            <a href="{{ route('gudang.index') }}" class="block py-2.5 px-4 rounded transition duration-200 bg-blue-700 font-bold">
+                <i class="fas fa-warehouse mr-2"></i>Gudang
+            </a>
+            <a href="{{ route('products.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
+                <i class="fas fa-box-open mr-2"></i>Products
+            </a>
+            <a href="{{ route('expenses.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
+                <i class="fas fa-file-invoice-dollar mr-2"></i>Expenses
+            </a>
+            <a href="{{ route('customers.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
+                <i class="fas fa-users mr-2"></i>Customers
+            </a>
         </nav>
 
         {{-- Konten Utama --}}
@@ -24,18 +38,24 @@
             </div>
 
             <div class="p-6 border border-gray-200 rounded-lg bg-white shadow-md max-w-lg mx-auto">
-                @if($transaction)
+                {{-- Pastikan variabel $transaction ada sebelum menampilkan form --}}
+                @if(isset($transaction))
                 <form action="{{ route('gudang.update', $transaction->id) }}" method="POST">
                     @csrf
-                    @method('PUT')
+                    @method('PUT') {{-- Metode PUT untuk update --}}
+
                     <div class="space-y-4">
-                        <div class="p-4 bg-gray-50 rounded-lg">
+                        {{-- Menampilkan detail transaksi yang tidak bisa diubah --}}
+                        <div class="p-4 bg-gray-50 rounded-lg border">
                             <p><strong>Produk:</strong> {{ $transaction->product_name }}</p>
                             <p><strong>Customer:</strong> {{ $transaction->customer_name ?? 'N/A' }}</p>
                             <p><strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($transaction->tanggal)->format('d M Y, H:i') }}</p>
+                            <p><strong>Total:</strong> Rp {{ number_format($transaction->total_transaksi, 0, ',', '.') }}</p>
                         </div>
+
+                        {{-- Input untuk mengubah metode pembayaran --}}
                         <div>
-                            <label class="block text-gray-700 mb-1" for="payment_method">Metode Pembayaran:</label>
+                            <label class="block text-gray-700 mb-1 font-semibold" for="payment_method">Metode Pembayaran:</label>
                             <select id="payment_method" name="payment_method" class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500" required>
                                 <option value="cash" {{ $transaction->payment_method == 'cash' ? 'selected' : '' }}>Cash</option>
                                 <option value="debit_bca" {{ $transaction->payment_method == 'debit_bca' ? 'selected' : '' }}>Debit BCA</option>
