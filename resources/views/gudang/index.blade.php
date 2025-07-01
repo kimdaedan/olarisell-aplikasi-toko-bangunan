@@ -44,12 +44,41 @@
 
         {{-- Konten Utama --}}
         <div class="flex-1 p-8 overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-bold text-gray-800">Riwayat Transaksi</h1>
-                <a href="/kasir" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
-                    <i class="fas fa-cash-register mr-2"></i>Halaman Kasir
-                </a>
-            </div>
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Riwayat Transaksi (Gudang)</h1>
+            <a href="/kasir" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
+                <i class="fas fa-cash-register mr-2"></i>Halaman Kasir
+            </a>
+        </div>
+
+        {{-- Notifikasi --}}
+        @if(session('success'))
+            {{-- ... (kode notifikasi) ... --}}
+        @endif
+        @if(session('error'))
+            {{-- ... (kode notifikasi) ... --}}
+        @endif
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            {{-- PERUBAHAN: Form Filter --}}
+            <form action="{{ route('gudang.index') }}" method="GET" class="mb-6 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                <div class="md:col-span-2">
+                    <label for="search" class="block text-sm font-medium text-gray-700">Nama Customer</label>
+                    <input type="text" name="search" id="search" placeholder="Cari nama customer..." class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2" value="{{ request('search') }}">
+                </div>
+                <div>
+                    <label for="start_date" class="block text-sm font-medium text-gray-700">Dari Tanggal</label>
+                    <input type="date" name="start_date" id="start_date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2" value="{{ request('start_date') }}">
+                </div>
+                <div>
+                    <label for="end_date" class="block text-sm font-medium text-gray-700">Sampai Tanggal</label>
+                    <input type="date" name="end_date" id="end_date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2" value="{{ request('end_date') }}">
+                </div>
+                <div class="flex space-x-2">
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700"><i class="fas fa-filter mr-1"></i> Filter</button>
+                    <a href="{{ route('gudang.index') }}" class="w-full text-center bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-600" title="Reset Filter"><i class="fas fa-sync-alt"></i></a>
+                </div>
+            </form>
 
             {{-- Notifikasi --}}
             @if(session('success'))

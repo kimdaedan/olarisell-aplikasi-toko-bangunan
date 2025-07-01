@@ -20,13 +20,13 @@
         }
     </style>
     <script>
-        // Fungsi ini tetap sama untuk menampilkan/menyembunyikan form
+        // Fungsi untuk menampilkan/menyembunyikan form
         function toggleForm() {
             const form = document.getElementById('addExpenseForm');
             form.classList.toggle('hidden');
         }
 
-        // Fungsi ini tetap sama untuk konfirmasi sebelum menghapus
+        // Fungsi untuk konfirmasi sebelum menghapus
         function confirmDelete(event) {
             if (!confirm("Apakah Anda yakin ingin menghapus pengeluaran ini?")) {
                 event.preventDefault();
@@ -43,16 +43,16 @@
             <div class="mb-10">
                 <img src="{{ asset('logo.png') }}" alt="Logo OLARISELL" class="max-w-full h-auto mb-4 rounded">
             </div>
-            <a href="/gudang" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
-                <i class="fas fa-cash-register mr-2"></i>Sell
+            <a href="{{ route('gudang.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
+                <i class="fas fa-warehouse mr-2"></i>Gudang
             </a>
-            <a href="/products" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
+            <a href="{{ route('products.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
                 <i class="fas fa-box-open mr-2"></i>Products
             </a>
-            <a href="/expenses" class="block py-2.5 px-4 rounded transition duration-200 bg-blue-700 font-bold font-bold">
+            <a href="{{ route('expenses.index') }}" class="block py-2.5 px-4 rounded transition duration-200 bg-blue-700 font-bold">
                 <i class="fas fa-file-invoice-dollar mr-2"></i>Expenses
             </a>
-            <a href="/customers" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700 ">
+            <a href="{{ route('customers.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-700">
                 <i class="fas fa-users mr-2"></i>Customers
             </a>
         </nav>
@@ -61,17 +61,12 @@
         <div class="flex-1 p-8 overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-3xl font-bold text-gray-800">Manajemen Pengeluaran</h1>
-                <div>
-                    <a href="/kasir" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
-                        <i class="fas fa-calculator mr-2"></i>Kasir
-                    </a>
-                    <button onclick="toggleForm()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300 ml-2">
-                        <i class="fas fa-plus mr-2"></i>Tambah Pengeluaran
-                    </button>
-                </div>
+                <button onclick="toggleForm()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
+                    <i class="fas fa-plus mr-2"></i>Tambah Pengeluaran
+                </button>
             </div>
 
-            {{-- Blok untuk menampilkan notifikasi sukses atau error --}}
+            {{-- Notifikasi --}}
             @if(session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
                     <span class="block sm:inline">{{ session('success') }}</span>
@@ -82,8 +77,6 @@
                     <span class="block sm:inline">{{ session('error') }}</span>
                 </div>
             @endif
-
-            {{-- Blok untuk menampilkan error validasi --}}
             @if ($errors->any())
                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
                     <p class="font-bold">Terjadi Kesalahan</p>
@@ -101,28 +94,27 @@
                 <form action="{{ url('/expenses') }}" method="POST">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="mb-4">
+                        <div>
                             <label class="block text-gray-600 mb-1" for="date">Tanggal:</label>
                             <input type="date" id="date" name="date" class="border border-gray-300 rounded p-2 w-full" required>
                         </div>
-                        <div class="mb-4">
+                        <div>
                             <label class="block text-gray-600 mb-1" for="category">Kategori Pengeluaran:</label>
                             <input type="text" id="category" name="category" class="border border-gray-300 rounded p-2 w-full" placeholder="Contoh: Biaya Operasional" required>
                         </div>
-                        <div class="mb-4">
+                        <div>
                             <label class="block text-gray-600 mb-1" for="amount">Jumlah:</label>
                             <input type="number" id="amount" name="amount" class="border border-gray-300 rounded p-2 w-full" placeholder="Contoh: 150000" required>
                         </div>
-                        <div class="mb-4">
+                        <div>
                             <label class="block text-gray-600 mb-1" for="status">Status Pembayaran:</label>
-                            {{-- PERUBAHAN: Mengubah name menjadi 'status' agar sesuai dengan controller --}}
                             <select id="status" name="status" class="border border-gray-300 rounded p-2 w-full" required>
                                 <option value="paid">Paid</option>
                                 <option value="unpaid">Unpaid</option>
                             </select>
                         </div>
                     </div>
-                    <div class="flex justify-end mt-2">
+                    <div class="flex justify-end mt-4">
                         <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold px-5 py-2 rounded shadow-md transition duration-300">Simpan</button>
                         <button type="button" onclick="toggleForm()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold px-5 py-2 rounded shadow-md transition duration-300 ml-2">Batal</button>
                     </div>
@@ -131,7 +123,23 @@
 
             {{-- Tabel untuk menampilkan daftar pengeluaran --}}
             <div class="bg-white rounded-lg shadow-md p-6">
-                 <div class="overflow-x-auto table-container">
+                {{-- Form Filter Tanggal --}}
+                <form action="{{ route('expenses.index') }}" method="GET" class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div>
+                        <label for="start_date" class="block text-sm font-medium text-gray-700">Dari Tanggal</label>
+                        <input type="date" name="start_date" id="start_date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2" value="{{ request('start_date') }}">
+                    </div>
+                    <div>
+                        <label for="end_date" class="block text-sm font-medium text-gray-700">Sampai Tanggal</label>
+                        <input type="date" name="end_date" id="end_date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2" value="{{ request('end_date') }}">
+                    </div>
+                    <div class="flex space-x-2">
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-700"><i class="fas fa-filter mr-1"></i> Filter</button>
+                        <a href="{{ route('expenses.index') }}" class="w-full text-center bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-600" title="Reset Filter"><i class="fas fa-sync-alt"></i></a>
+                    </div>
+                </form>
+
+                <div class="overflow-x-auto table-container">
                     <table class="min-w-full border-collapse">
                         <thead>
                             <tr class="bg-gray-200">
@@ -149,23 +157,23 @@
                                     <td class="p-3 text-gray-700 font-medium">{{ $expense->category }}</td>
                                     <td class="p-3 text-gray-700">Rp {{ number_format($expense->amount, 0, ',', '.') }}</td>
                                     <td class="p-3">
-                                        {{-- Tampilan status yang lebih baik (Badge) --}}
                                         @if($expense->payment_status == 'paid')
-                                            <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">
-                                                Paid
-                                            </span>
+                                            <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">Paid</span>
                                         @else
-                                            <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full">
-                                                Unpaid
-                                            </span>
+                                            <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full">Unpaid</span>
                                         @endif
                                     </td>
                                     <td class="p-3">
-                                        <div class="flex space-x-2">
-                                            {{-- Tombol Edit dan Hapus hanya menggunakan ikon agar lebih rapi --}}
-                                            <a href="{{ url('/expenses/' . $expense->id . '/edit') }}" class="text-yellow-500 hover:text-yellow-700" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
+                                        <div class="flex space-x-3 items-center">
+                                            @if($expense->payment_status == 'unpaid')
+                                                <a href="{{ url('/expenses/' . $expense->id . '/edit') }}" class="text-yellow-500 hover:text-yellow-700" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            @else
+                                                <span class="text-gray-400 cursor-not-allowed" title="Tidak bisa diedit karena sudah lunas">
+                                                    <i class="fas fa-edit"></i>
+                                                </span>
+                                            @endif
                                             <form action="{{ url('/expenses/' . $expense->id) }}" method="POST" onsubmit="confirmDelete(event);">
                                                 @csrf
                                                 @method('DELETE')
@@ -184,11 +192,29 @@
                                 </tr>
                             @endforelse
                         </tbody>
+                        {{-- Menambahkan tfoot untuk Grand Total --}}
+                        @if(isset($grandTotal) && $expenses->isNotEmpty())
+                        <tfoot>
+                            <tr class="bg-gray-200 font-bold">
+                                <td colspan="2" class="p-3 text-right text-gray-800">Total Pengeluaran:</td>
+                                <td class="p-3 text-gray-900">
+                                    Rp {{ number_format($grandTotal, 0, ',', '.') }}
+                                </td>
+                                <td colspan="2" class="p-3"></td>
+                            </tr>
+                        </tfoot>
+                        @endif
                     </table>
                 </div>
+
+                {{-- PERBAIKAN: Memeriksa apakah $expenses adalah objek Paginator sebelum menampilkan link --}}
+                @if($expenses instanceof \Illuminate\Pagination\Paginator && $expenses->hasPages())
+                <div class="mt-6">
+                    {{ $expenses->appends(request()->query())->links() }}
+                </div>
+                @endif
             </div>
         </div>
     </div>
 </body>
-
 </html>
