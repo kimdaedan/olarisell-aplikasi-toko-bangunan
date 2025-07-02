@@ -38,9 +38,14 @@
         <div class="flex-1 p-8 overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-3xl font-bold text-gray-800">Manajemen Customer</h1>
+                <div class="flex items-center space-x-2">
+                    <a href="/kasir" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
+                        <i class="fas fa-calculator mr-2"></i>Kasir
+                    </a>
                 <a href="{{ route('customers.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
                     <i class="fas fa-user-plus mr-2"></i>Tambah Customer
                 </a>
+            </div>
             </div>
 
             {{-- Notifikasi --}}
