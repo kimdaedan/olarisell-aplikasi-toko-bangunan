@@ -36,7 +36,7 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 
 // --- RUTE TERPROTEKSI (Harus login untuk mengakses) ---
 // Semua rute di dalam grup ini akan dijaga oleh middleware 'auth.api'
-//Route::middleware(['auth.api'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
 
 // untuk log out
@@ -100,4 +100,4 @@ Route::get('/landing', function () {
 //untuk transaksi
 //Route::apiResource('transactions', TransactionController::class);
 
-//});
+});
