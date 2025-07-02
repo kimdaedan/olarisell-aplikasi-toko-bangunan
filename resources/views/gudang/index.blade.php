@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@
         .table-container::-webkit-scrollbar {
             height: 8px;
         }
+
         .table-container::-webkit-scrollbar-thumb {
             background-color: #A0AEC0;
             border-radius: 4px;
@@ -20,22 +22,27 @@
 
         /* Style khusus untuk mode cetak */
         @media print {
+
             /* Sembunyikan semua elemen yang memiliki kelas 'no-print' */
             .no-print {
                 display: none !important;
             }
+
             /* Pastikan konten utama mengisi seluruh halaman cetak */
-            body, .main-content {
+            body,
+            .main-content {
                 margin: 0;
                 padding: 0;
                 background-color: white;
             }
+
             /* Hapus bayangan dan border dari area yang akan dicetak */
             .printable-area {
                 box-shadow: none !important;
                 border: none !important;
                 padding: 0 !important;
             }
+
             /* Pastikan tabel menggunakan seluruh lebar */
             table {
                 width: 100%;
@@ -77,14 +84,14 @@
 
             {{-- Notifikasi --}}
             @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 no-print" role="alert">
-                    <span class="block sm:inline">{{ session('success') }}</span>
-                </div>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 no-print" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
             @endif
             @if(session('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 no-print" role="alert">
-                    <span class="block sm:inline">{{ session('error') }}</span>
-                </div>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 no-print" role="alert">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
             @endif
 
             <div class="bg-white rounded-lg shadow-md p-6 printable-area">
@@ -132,11 +139,15 @@
                         <tbody>
                             @forelse($transactions as $transaction)
                             <tr class="hover:bg-gray-50 border-b border-gray-200">
-                                <td class="p-3 no-print">
+                                <td class="p-3">
+                                    {{-- Periksa apakah pengguna yang login adalah superuser --}}
+                                    @if(Auth::user() && Auth::user()->is_superuser)
                                     <div class="flex space-x-3">
+                                        {{-- Tombol Edit --}}
                                         <a href="{{ route('gudang.edit', $transaction->id) }}" class="text-yellow-500 hover:text-yellow-700" title="Edit Payment Method">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        {{-- Tombol Delete --}}
                                         <form action="{{ route('gudang.destroy', $transaction->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi ini?');">
                                             @csrf
                                             @method('DELETE')
@@ -145,6 +156,9 @@
                                             </button>
                                         </form>
                                     </div>
+                                    @else
+                                    <span class="text-gray-400">-</span>
+                                    @endif
                                 </td>
                                 {{-- Data lainnya --}}
                                 <td class="p-3 text-gray-700">{{ \Carbon\Carbon::parse($transaction->tanggal)->format('d M Y, H:i') }}</td>
@@ -155,11 +169,11 @@
                                 <td class="p-3 text-gray-800 font-bold">Rp {{ number_format($transaction->total_transaksi, 0, ',', '.') }}</td>
                             </tr>
                             @empty
-                                <tr>
-                                    <td colspan="7" class="text-center p-6 text-gray-500">
-                                        Tidak ada data transaksi yang ditemukan.
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="7" class="text-center p-6 text-gray-500">
+                                    Tidak ada data transaksi yang ditemukan.
+                                </td>
+                            </tr>
                             @endforelse
                         </tbody>
                         @if(isset($grandTotal))
@@ -185,4 +199,5 @@
         </div>
     </div>
 </body>
+
 </html>

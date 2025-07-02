@@ -11,8 +11,14 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         /* Menambahkan sedikit style tambahan untuk scrollbar yang lebih baik di tabel responsif */
-        .table-container::-webkit-scrollbar { height: 8px; }
-        .table-container::-webkit-scrollbar-thumb { background-color: #A0AEC0; border-radius: 4px; }
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: #A0AEC0;
+            border-radius: 4px;
+        }
     </style>
     <script>
         // Fungsi untuk menampilkan/menyembunyikan form
@@ -57,7 +63,7 @@
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-3xl font-bold text-gray-800">Manajemen Produk</h1>
                 <div class="flex items-center space-x-2">
-                     <a href="/kasir" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
+                    <a href="/kasir" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
                         <i class="fas fa-calculator mr-2"></i>Kasir
                     </a>
                     <button onclick="toggleForm()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
@@ -68,24 +74,24 @@
 
             {{-- Notifikasi Sukses, Error, dan Validasi --}}
             @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <span class="block sm:inline">{{ session('success') }}</span>
-                </div>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
             @endif
             @if(session('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <span class="block sm:inline">{{ session('error') }}</span>
-                </div>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
             @endif
             @if ($errors->any())
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
-                    <p class="font-bold">Terjadi Kesalahan</p>
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+                <p class="font-bold">Terjadi Kesalahan</p>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
             @endif
 
             {{-- Form untuk menambahkan produk baru (default tersembunyi) --}}
@@ -128,7 +134,7 @@
                     </form>
                 </div>
 
-                 <div class="overflow-x-auto table-container">
+                <div class="overflow-x-auto table-container">
                     <table class="min-w-full border-collapse">
                         <thead>
                             <tr class="bg-gray-200">
@@ -141,40 +147,45 @@
                         </thead>
                         <tbody>
                             @forelse ($products as $product)
-                                <tr class="hover:bg-gray-50 border-b border-gray-200">
-                                    <td class="p-3">
-                                        {{-- PERBAIKAN PENTING: Menampilkan gambar dengan benar dari storage dan memberi placeholder --}}
-                                        <img src="{{ $product->gambar }}" alt="Gambar Produk" class="w-16 h-16">
-                                    </td>
-                                    <td class="p-3 text-gray-700 font-medium">{{ $product->nama }}</td>
-                                    <td class="p-3 text-gray-700">Rp {{ number_format($product->harga, 0, ',', '.') }}</td>
-                                    <td class="p-3 text-gray-700 text-center">{{ $product->jumlah }}</td>
-                                    <td class="p-3">
-                                        <div class="flex space-x-3">
-                                            <a href="{{ url('/products/' . $product->id . '/edit') }}" class="text-yellow-500 hover:text-yellow-700" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <form action="{{ url('/products/' . $product->id) }}" method="POST" onsubmit="confirmDelete(event);">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-500 hover:text-red-700" title="Delete">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
+                            <tr class="hover:bg-gray-50 border-b border-gray-200">
+                                <td class="p-3">
+                                    {{-- PERBAIKAN PENTING: Menampilkan gambar dengan benar dari storage dan memberi placeholder --}}
+                                    <img src="{{ $product->gambar }}" alt="Gambar Produk" class="w-16 h-16">
+                                </td>
+                                <td class="p-3 text-gray-700 font-medium">{{ $product->nama }}</td>
+                                <td class="p-3 text-gray-700">Rp {{ number_format($product->harga, 0, ',', '.') }}</td>
+                                <td class="p-3 text-gray-700 text-center">{{ $product->jumlah }}</td>
+                                <td class="p-3">
+                                <td class="p-3">
+                                    @if(Auth::user() && Auth::user()->is_superuser)
+                                    <div class="flex space-x-3">
+                                        <a href="{{ url('/products/' . $product->id . '/edit') }}" class="text-yellow-500 hover:text-yellow-700" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ url('/products/' . $product->id) }}" method="POST" onsubmit="confirmDelete(event);">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-500 hover:text-red-700" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    @else
+                                    <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
+                            </tr>
                             @empty
-                                <tr>
-                                    <td colspan="5" class="text-center p-6 text-gray-500">
-                                        {{-- Pesan disesuaikan jika sedang melakukan pencarian --}}
-                                        @if(request('search'))
-                                            Produk dengan nama "{{ request('search') }}" tidak ditemukan.
-                                        @else
-                                            Tidak ada data produk yang ditemukan.
-                                        @endif
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="5" class="text-center p-6 text-gray-500">
+                                    {{-- Pesan disesuaikan jika sedang melakukan pencarian --}}
+                                    @if(request('search'))
+                                    Produk dengan nama "{{ request('search') }}" tidak ditemukan.
+                                    @else
+                                    Tidak ada data produk yang ditemukan.
+                                    @endif
+                                </td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -183,4 +194,5 @@
         </div>
     </div>
 </body>
+
 </html>

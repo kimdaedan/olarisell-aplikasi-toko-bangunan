@@ -207,7 +207,8 @@
                                     <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full">Unpaid</span>
                                     @endif
                                 </td>
-                                <td class="p-3 no-print">
+                                <td class="p-3">
+                                    @if(Auth::user() && Auth::user()->is_superuser)
                                     <div class="flex space-x-3 items-center">
                                         @if($expense->payment_status == 'unpaid')
                                         <a href="{{ url('/expenses/' . $expense->id . '/edit') }}" class="text-yellow-500 hover:text-yellow-700" title="Edit">
@@ -226,6 +227,9 @@
                                             </button>
                                         </form>
                                     </div>
+                                    @else
+                                    <span class="text-gray-400">-</span>
+                                    @endif
                                 </td>
                             </tr>
                             @empty

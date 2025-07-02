@@ -1,103 +1,66 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SaleController;
-use App\Http\Controllers\kasirController;
-use App\Http\Controllers\gudangController;
-use App\Http\Controllers\productsController;
-use App\Http\Controllers\expensesController;
-use App\Http\Controllers\CustomerController;
+// Import semua controller yang akan digunakan dengan nama yang konsisten
 use App\Http\Controllers\Auth\LoginController;
-//use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\GudangController;
+use App\Http\Controllers\KasirController;
+use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\ExpensesController;
+use App\Http\Controllers\CustomerController;
 
+/*
+|--------------------------------------------------------------------------
+| Rute Aplikasi Web
+|--------------------------------------------------------------------------
+*/
 
+//================================================
+// RUTE PUBLIK (Dapat diakses tanpa perlu login)
+//================================================
 
-
-// Rute untuk halaman utama
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
-//landing juga
+// Rute untuk halaman utama/landing page
 Route::get('/', function () {
     return view('landing');
-})->name('landing');
+})->name('welcome');
 
-
-//untuk loginnya
-
+// Rute untuk menampilkan form login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+
+// Rute untuk memproses data login yang dikirim dari form
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 
-// Rute untuk resource products
-
-
-
-// --- RUTE TERPROTEKSI (Harus login untuk mengakses) ---
-// Semua rute di dalam grup ini akan dijaga oleh middleware 'auth.api'
-Route::middleware(['auth'])->group(function () {
-
-
-// untuk log out
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-// Rute untuk resource sales
-Route::resource('sales', SaleController::class);
-
-// Rute untuk tampilan kasir
-Route::get('/kasir', function () {
-    return view('kasir'); // Mengembalikan tampilan cashier
-});
-
-//rite untuk tampilan gudang
-Route::get('/gudang', [GudangController::class, 'index'])->name('gudang.index');
-
-
-//untuk kasir
-Route::get('/kasir', [KasirController::class, 'index'])->name('kasir.index');
-Route::get('/kasir/cari', [KasirController::class, 'cariProduk'])->name('kasir.cari');
-//Route::post('/kasir', [KasirController::class, 'handleKasir'])->name('kasir.handle');
-Route::post('/kasir/closing', [KasirController::class, 'closeTransaction'])->name('api.kasir.closeTransaction');
-
-
-// untuk gudang
-Route::get('/gudang', [GudangController::class, 'index'])->name('gudang.index');
-Route::resource('gudang', GudangController::class);
-
-// untuk products
-Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
-Route::post('/products', [ProductsController::class, 'store']);
-Route::get('/products/{id}', [ProductsController::class, 'show'])->name('product.show');
-Route::resource('products', ProductsController::class);
-
-
-
-
-// untuk expenses
-Route::get('/expenses', [expensesController::class, 'index'])->name('expenses.index');
-Route::post('/expenses', [expensesController::class, 'store']);
-Route::delete('/expenses/{id}', [ExpensesController::class, 'destroy'])->name('expenses.destroy');
-Route::get('/expenses/{id}/edit', [ExpensesController::class, 'edit'])->name('expenses.edit');
-Route::put('/expenses/{id}', [ExpensesController::class, 'update'])->name('expenses.update');
-
-
-
-// untuk customer
-Route::resource('customers', CustomerController::class);
-Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
-Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
-
-
-//rite untuk tampilan landing page
+    //rite untuk tampilan landing page
 Route::get('/landing', function () {
     return view('landing'); // Mengembalikan tampilan warehouse
 });
 
 
+//================================================
+// RUTE TERPROTEKSI (Harus login untuk mengakses)
+//================================================
+
+// Semua rute di dalam grup ini akan dijaga oleh middleware 'auth' bawaan Laravel.
+// Siapapun yang belum login akan otomatis dialihkan ke halaman 'login'.
+Route::middleware(['auth'])->group(function () {
+
+    // Rute untuk logout (hanya bisa diakses jika sudah login)
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
+    // Rute untuk halaman Kasir (hanya menampilkan halaman)
+    Route::get('/kasir', [KasirController::class, 'index'])->name('kasir.index');
 
-//untuk transaksi
-//Route::apiResource('transactions', TransactionController::class);
+    // Rute untuk semua fungsionalitas Gudang (index, edit, update, destroy)
+    Route::resource('gudang', GudangController::class)->only([
+        'index', 'edit', 'update', 'destroy'
+    ]);
+
+    // Rute untuk semua fungsionalitas Products, Expenses, dan Customers
+    // Route::resource secara otomatis membuat rute untuk:
+    // index, create, store, show, edit, update, dan destroy.
+    Route::resource('products', ProductsController::class);
+    Route::resource('expenses', ExpensesController::class);
+    Route::resource('customers', CustomerController::class);
 
 });
