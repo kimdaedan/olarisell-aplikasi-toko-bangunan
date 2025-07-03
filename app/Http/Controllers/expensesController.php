@@ -55,7 +55,6 @@ class ExpensesController extends Controller
             );
 
             $grandTotal = $data->grand_total ?? 0;
-
         } catch (\Exception $e) {
             Log::error('Failed to fetch expenses from Django: ' . $e->getMessage());
             $expenses = new LengthAwarePaginator([], 0, 25);
@@ -124,26 +123,22 @@ class ExpensesController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // Validasi hanya untuk status
         $request->validate([
-            'date' => 'required|date',
-            'category' => 'required|string|max:255',
-            'amount' => 'required|numeric|min:0',
-            'status' => 'required|string',
+            'status' => 'required|string|in:paid,unpaid',
         ]);
 
         try {
+            // Kirim HANYA payment_status ke API
             $this->client->put($this->apiEndpoint . $id . '/', [
                 'json' => [
-                    'date' => $request->date,
-                    'category' => $request->category,
-                    'amount' => $request->amount,
                     'payment_status' => $request->status,
                 ]
             ]);
-            return redirect()->route('expenses.index')->with('success', 'Expense updated successfully.');
+            return redirect()->route('expenses.index')->with('success', 'Status pengeluaran berhasil diperbarui.');
         } catch (\Exception $e) {
-            Log::error("Failed to update expense (ID: {$id}): " . $e->getMessage());
-            return back()->with('error', 'Failed to update data.');
+            Log::error("Gagal memperbarui pengeluaran (ID: {$id}): " . $e->getMessage());
+            return back()->with('error', 'Gagal memperbarui data.');
         }
     }
 
@@ -167,7 +162,7 @@ class ExpensesController extends Controller
     public function exportPdf(Request $request)
     {
         try {
-             $queryParams = [
+            $queryParams = [
                 'start_date' => $request->input('start_date'),
                 'end_date' => $request->input('end_date'),
             ];
@@ -182,7 +177,6 @@ class ExpensesController extends Controller
 
             $pdf = Pdf::loadView('expenses.pdf', compact('expenses'));
             return $pdf->download('expenses-report.pdf');
-
         } catch (\Exception $e) {
             Log::error('Failed to export expenses PDF: ' . $e->getMessage());
             return redirect()->route('expenses.index')->with('error', 'Failed to create PDF report.');

@@ -51,16 +51,33 @@ Route::middleware(['auth'])->group(function () {
     // Rute untuk halaman Kasir (hanya menampilkan halaman)
     Route::get('/kasir', [KasirController::class, 'index'])->name('kasir.index');
 
+
+    Route::post('/products/add-stock', [ProductsController::class, 'addStock'])->name('products.addStock');
+
+
     // Rute untuk semua fungsionalitas Gudang (index, edit, update, destroy)
     Route::resource('gudang', GudangController::class)->only([
         'index', 'edit', 'update', 'destroy'
-    ]);
 
+    ]);
+// --- Expenses ---
+    Route::get('/expenses', [ExpensesController::class, 'index'])->name('expenses.index');
+    Route::post('/expenses', [ExpensesController::class, 'store'])->name('expenses.store');
+
+    // Rute edit dan update sekarang bisa diakses semua user
+    Route::get('/expenses/{expense}/edit', [ExpensesController::class, 'edit'])->name('expenses.edit');
+    Route::put('/expenses/{expense}', [ExpensesController::class, 'update'])->name('expenses.update');
+
+    // Hanya superuser yang bisa menghapus pengeluaran
+    Route::middleware(['is.superuser'])->group(function () {
+        Route::delete('/expenses/{expense}', [ExpensesController::class, 'destroy'])->name('expenses.destroy');
+    });
     // Rute untuk semua fungsionalitas Products, Expenses, dan Customers
     // Route::resource secara otomatis membuat rute untuk:
     // index, create, store, show, edit, update, dan destroy.
     Route::resource('products', ProductsController::class);
     Route::resource('expenses', ExpensesController::class);
     Route::resource('customers', CustomerController::class);
+
 
 });

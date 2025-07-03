@@ -156,6 +156,7 @@
                 </form>
             </div>
 
+
             {{-- Tabel untuk menampilkan daftar pengeluaran --}}
             <div class="bg-white rounded-lg shadow-md p-6">
                 {{-- Form Filter Tanggal --}}
@@ -192,62 +193,65 @@
             </div>
 
             <div class="overflow-x-auto table-container">
-                <table class="min-w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Tanggal</th>
-                            <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Kategori</th>
-                            <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Jumlah</th>
-                            <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Status</th>
-                            <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700 no-print">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($expenses as $expense)
-                        <tr class="hover:bg-gray-50 border-b border-gray-200">
-                            <td class="p-3 text-gray-700">{{ \Carbon\Carbon::parse($expense->date)->format('d M Y, H:i') }}</td>
-                            <td class="p-3 text-gray-700 font-medium">{{ $expense->category }}</td>
-                            <td class="p-3 text-gray-700">Rp {{ number_format($expense->amount, 0, ',', '.') }}</td>
-                            <td class="p-3">
-                                @if($expense->payment_status == 'paid')
-                                <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">Paid</span>
-                                @else
-                                <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full">Unpaid</span>
-                                @endif
-                            </td>
-                            <td class="p-3">
-                                @if(Auth::user() && Auth::user()->is_superuser)
-                                <div class="flex space-x-3 items-center">
-                                    @if($expense->payment_status == 'unpaid')
-                                    <a href="{{ url('/expenses/' . $expense->id . '/edit') }}" class="text-yellow-500 hover:text-yellow-700" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    @else
-                                    <span class="text-gray-400 cursor-not-allowed" title="Tidak bisa diedit karena sudah lunas">
-                                        <i class="fas fa-edit"></i>
-                                    </span>
-                                    @endif
-                                    <form action="{{ url('/expenses/' . $expense->id) }}" method="POST" onsubmit="confirmDelete(event);">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-500 hover:text-red-700" title="Delete">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                                @else
-                                <span class="text-gray-400">-</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" class="text-center p-6 text-gray-500">
-                                Tidak ada data pengeluaran yang ditemukan.
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
+                    <table class="min-w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Tanggal</th>
+                                <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Kategori</th>
+                                <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Jumlah</th>
+                                <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Status</th>
+                                <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700 no-print">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($expenses as $expense)
+                                <tr class="hover:bg-gray-50 border-b border-gray-200">
+                                    <td class="p-3 text-gray-700">{{ \Carbon\Carbon::parse($expense->date)->format('d M Y, H:i') }}</td>
+                                    <td class="p-3 text-gray-700 font-medium">{{ $expense->category }}</td>
+                                    <td class="p-3 text-gray-700">Rp {{ number_format($expense->amount, 0, ',', '.') }}</td>
+                                    <td class="p-3">
+                                        @if($expense->payment_status == 'paid')
+                                            <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">Paid</span>
+                                        @else
+                                            <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full">Unpaid</span>
+                                        @endif
+                                    </td>
+                                    <td class="p-3 no-print">
+                                        <div class="flex space-x-3 items-center">
+                                            {{-- PERBAIKAN: Logika untuk tombol Edit dan Hapus dipisah --}}
+
+                                            {{-- 1. Tombol Edit: Tampil jika status 'unpaid' untuk SEMUA user --}}
+                                            @if($expense->payment_status == 'unpaid')
+                                                <a href="{{ url('/expenses/' . $expense->id . '/edit') }}" class="text-yellow-500 hover:text-yellow-700" title="Edit Status">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            @else
+                                                <span class="text-gray-400 cursor-not-allowed" title="Tidak bisa diedit karena sudah lunas">
+                                                    <i class="fas fa-edit"></i>
+                                                </span>
+                                            @endif
+
+                                            {{-- 2. Tombol Hapus: Tampil HANYA untuk superuser --}}
+                                            @if(Auth::user() && Auth::user()->is_superuser)
+                                                <form action="{{ url('/expenses/' . $expense->id) }}" method="POST" onsubmit="confirmDelete(event);">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-500 hover:text-red-700" title="Delete">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center p-6 text-gray-500">
+                                        Tidak ada data pengeluaran yang ditemukan.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
                     @if(isset($grandTotal) && $expenses->isNotEmpty())
                     <tfoot>
                         <tr class="bg-gray-200 font-bold">

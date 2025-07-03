@@ -9,6 +9,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     {{-- Tailwind CSS --}}
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {{-- Select2 untuk dropdown pencarian --}}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <style>
         /* Menambahkan sedikit style tambahan untuk scrollbar yang lebih baik di tabel responsif */
         .table-container::-webkit-scrollbar {
@@ -32,6 +34,11 @@
             if (!confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
                 event.preventDefault();
             }
+        }
+
+        function toggleStockForm() {
+            const form = document.getElementById('addStockForm');
+            form.classList.toggle('hidden');
         }
     </script>
 </head>
@@ -63,14 +70,16 @@
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-3xl font-bold text-gray-800">Manajemen Produk</h1>
                 <div class="flex items-center space-x-2">
-                    <a href="/kasir" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
-                        <i class="fas fa-calculator mr-2"></i>Kasir
-                    </a>
+                    <button onclick="toggleStockForm()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
+                        <i class="fas fa-plus-circle mr-2"></i>Tambah Stok
+                    </button>
                     <button onclick="toggleForm()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300">
                         <i class="fas fa-plus mr-2"></i>Tambah Produk
                     </button>
                 </div>
             </div>
+
+
 
             {{-- Notifikasi Sukses, Error, dan Validasi --}}
             @if(session('success'))
@@ -93,6 +102,36 @@
                 </ul>
             </div>
             @endif
+
+
+             {{-- --- FORM BARU DITAMBAHKAN DI SINI --- --}}
+            <div id="addStockForm" class="hidden mb-6 p-6 border border-gray-300 rounded-lg bg-white shadow-md">
+                <h2 class="text-2xl font-bold mb-4 text-gray-700">Tambah Stok Produk</h2>
+                <form action="{{ route('products.addStock') }}" method="POST">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-600 mb-1" for="product_id">Pilih Produk:</label>
+                            {{-- PERUBAHAN: Menambahkan class 'select2-products' --}}
+                            <select name="product_id" id="product_id" class="w-full select2-products" required>
+                                <option value="">-- Pilih Produk --</option>
+                                @foreach($products as $product)
+                                    <option value="{{ $product->id }}">{{ $product->nama }} (Stok saat ini: {{ $product->jumlah }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-600 mb-1" for="quantity">Jumlah Stok Ditambah:</label>
+                            <input type="number" id="quantity" name="quantity" class="border border-gray-300 rounded p-2 w-full" placeholder="Contoh: 50" required min="1">
+                        </div>
+                    </div>
+                    <div class="flex justify-end mt-4">
+                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold px-5 py-2 rounded shadow-md transition duration-300">Simpan Stok</button>
+                        <button type="button" onclick="toggleStockForm()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold px-5 py-2 rounded shadow-md transition duration-300 ml-2">Batal</button>
+                    </div>
+                </form>
+            </div>
+
 
             {{-- Form untuk menambahkan produk baru (default tersembunyi) --}}
             <div id="addProductForm" class="hidden mb-6 p-6 border border-gray-300 rounded-lg bg-white shadow-md">
@@ -193,6 +232,18 @@
             </div>
         </div>
     </div>
+    {{-- PERUBAHAN: Menambahkan JQuery & Select2 JS --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Inisialisasi Select2 pada dropdown produk
+            $('.select2-products').select2({
+                placeholder: 'Cari dan pilih produk',
+                allowClear: true
+            });
+        });
+    </script>
 </body>
 
 </html>

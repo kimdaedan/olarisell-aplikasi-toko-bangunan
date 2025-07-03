@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     {{-- Tailwind CSS --}}
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-100 font-sans">
 
     <div class="flex h-screen">
@@ -42,61 +44,61 @@
 
             {{-- Menampilkan error validasi jika ada --}}
             @if ($errors->any())
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
-                    <p class="font-bold">Terjadi Kesalahan</p>
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+                <p class="font-bold">Terjadi Kesalahan</p>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
             @endif
 
             {{-- Form untuk mengedit pengeluaran --}}
             <div class="p-6 border border-gray-200 rounded-lg bg-white shadow-md max-w-2xl mx-auto">
-                {{-- Pastikan variabel $expense ada sebelum menampilkan form --}}
                 @if(isset($expense))
                 <form action="{{ route('expenses.update', $expense->id) }}" method="POST">
                     @csrf
-                    @method('PUT') {{-- Metode PUT untuk menandakan ini adalah proses update --}}
+                    @method('PUT')
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
                         <div>
-                            <label class="block text-gray-700 mb-1" for="date">Tanggal:</label>
-                            <input type="date" id="date" name="date" class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500"
-                                   value="{{ \Carbon\Carbon::parse($expense->date)->format('Y-m-d') }}" required>
+                            <label class="block text-gray-700 mb-1">Tanggal:</label>
+                            {{-- Dibuat readonly agar tidak bisa diubah --}}
+                            <input type="text" value="{{ \Carbon\Carbon::parse($expense->date)->format('d M Y') }}" class="border border-gray-300 rounded-lg p-3 w-full bg-gray-100" readonly>
                         </div>
                         <div>
-                            <label class="block text-gray-700 mb-1" for="category">Kategori Pengeluaran:</label>
-                            <input type="text" id="category" name="category" class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500"
-                                   value="{{ old('category', $expense->category) }}" placeholder="Contoh: Biaya Operasional" required>
+                            <label class="block text-gray-700 mb-1">Kategori Pengeluaran:</label>
+                            <input type="text" value="{{ $expense->category }}" class="border border-gray-300 rounded-lg p-3 w-full bg-gray-100" readonly>
                         </div>
                         <div>
-                            <label class="block text-gray-700 mb-1" for="amount">Jumlah:</label>
-                            <input type="number" id="amount" name="amount" class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500"
-                                   value="{{ old('amount', $expense->amount) }}" placeholder="Contoh: 150000" required>
+                            <label class="block text-gray-700 mb-1">Jumlah:</label>
+                            <input type="text" value="Rp {{ number_format($expense->amount, 0, ',', '.') }}" class="border border-gray-300 rounded-lg p-3 w-full bg-gray-100" readonly>
                         </div>
                         <div>
-                            <label class="block text-gray-700 mb-1" for="status">Status Pembayaran:</label>
+                            <label class="block text-gray-700 mb-1 font-semibold" for="status">Ubah Status Pembayaran:</label>
                             <select id="status" name="status" class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500" required>
-                                <option value="paid" {{ old('status', $expense->payment_status) == 'paid' ? 'selected' : '' }}>Paid</option>
-                                <option value="unpaid" {{ old('status', $expense->payment_status) == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
+                                {{-- Opsi 'unpaid' hanya ditampilkan jika statusnya memang unpaid --}}
+                                @if($expense->payment_status == 'unpaid')
+                                <option value="unpaid" selected>Unpaid</option>
+                                @endif
+                                {{-- Opsi 'paid' selalu ada --}}
+                                <option value="paid">Paid</option>
                             </select>
                         </div>
                     </div>
                     <div class="flex justify-end mt-6">
                         <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-lg shadow-md transition duration-300">
-                            <i class="fas fa-save mr-2"></i>Update Pengeluaran
+                            <i class="fas fa-save mr-2"></i>Update Status
                         </button>
                     </div>
                 </form>
                 @else
-                <div class="text-center text-red-500 p-4">
-                    <p>Data pengeluaran tidak ditemukan atau gagal dimuat.</p>
-                </div>
+                <p class="text-center text-red-500">Data pengeluaran tidak ditemukan.</p>
                 @endif
             </div>
         </div>
     </div>
 </body>
+
 </html>
