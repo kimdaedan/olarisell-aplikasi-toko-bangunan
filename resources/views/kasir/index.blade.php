@@ -14,28 +14,57 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <style>
         /* Custom scrollbar & Select2 style override */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; }
-        .select2-container .select2-selection--single { height: 42px !important; border-radius: 0.5rem !important; padding: 0.5rem 0.75rem !important; border: 1px solid #D1D5DB !important;}
-        .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 28px !important; }
-        .select2-container--default .select2-selection--single .select2-selection__arrow { height: 40px !important; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 42px !important;
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 0.75rem !important;
+            border: 1px solid #D1D5DB !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 28px !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 40px !important;
+        }
 
         /* PERUBAHAN: Style khusus untuk mode cetak */
         @media print {
+
             /* Sembunyikan semua elemen di body secara default */
-            body > * {
+            body>* {
                 display: none !important;
             }
+
             /* Tampilkan hanya div struk dan isinya */
-            #print-receipt-container, #print-receipt-container * {
+            #print-receipt-container,
+            #print-receipt-container * {
                 display: block !important;
             }
+
             /* Atur layout halaman cetak */
             @page {
                 margin: 10mm;
-                size: 80mm auto; /* Ukuran kertas struk thermal */
+                size: 80mm auto;
+                /* Ukuran kertas struk thermal */
             }
         }
     </style>
@@ -55,7 +84,7 @@
                     <a href="{{ route('gudang.index') }}" class="hover:text-blue-200 transition duration-300">
                         <i class="fas fa-warehouse mr-2"></i>Gudang
                     </a>
-                     <a href="{{ route('customers.create') }}" class="hover:text-blue-200 transition duration-300">
+                    <a href="{{ route('customers.create') }}" class="hover:text-blue-200 transition duration-300">
                         <i class="fas fa-user-plus mr-2"></i>Tambah Customer
                     </a>
                     <form action="{{ route('logout') }}" method="POST" class="inline">
@@ -76,7 +105,7 @@
                     <div id="product-list" class="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto p-2">
                         @forelse($produk as $item)
                         <div class="product-card cursor-pointer bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300"
-                             onclick="addProduct({{ $item->id }}, '{{ addslashes($item->nama) }}', {{ $item->harga }}, {{ $item->jumlah }})">
+                            onclick="addProduct({{ $item->id }}, '{{ addslashes($item->nama) }}', {{ $item->harga }}, {{ $item->jumlah }})">
                             <img src="{{ $item->gambar }}" alt="{{ $item->nama }}" class="h-20 w-20 object-cover mr-4">
                             <div class="p-3">
                                 <h4 class="font-semibold text-gray-800 truncate product-name">{{ $item->nama }}</h4>
@@ -142,12 +171,24 @@
             const cart = {};
 
             window.addProduct = function(id, name, price, stock) {
-                if (stock <= 0) { alert('Stok produk ini habis!'); return; }
+                if (stock <= 0) {
+                    alert('Stok produk ini habis!');
+                    return;
+                }
                 if (cart[id]) {
-                    if (cart[id].quantity < stock) { cart[id].quantity++; }
-                    else { alert('Jumlah pesanan melebihi stok yang tersedia.'); }
+                    if (cart[id].quantity < stock) {
+                        cart[id].quantity++;
+                    } else {
+                        alert('Jumlah pesanan melebihi stok yang tersedia.');
+                    }
                 } else {
-                    cart[id] = { name, price, quantity: 1, id, stock };
+                    cart[id] = {
+                        name,
+                        price,
+                        quantity: 1,
+                        id,
+                        stock
+                    };
                 }
                 renderCart();
             };
@@ -162,7 +203,11 @@
                     return;
                 }
                 for (const id in cart) {
-                    const { name, price, quantity } = cart[id];
+                    const {
+                        name,
+                        price,
+                        quantity
+                    } = cart[id];
                     totalPrice += price * quantity;
                     const productHtml = `<div class="flex items-center border-b py-3"><div class="flex-1"><p class="font-semibold text-gray-800">${name}</p><p class="text-sm text-gray-600">Rp ${price.toLocaleString('id-ID')}</p></div><div class="flex items-center space-x-3"><button onclick="decrement(${id})" class="text-gray-500 hover:text-red-500 text-lg transition-colors">-</button><span class="font-semibold w-8 text-center">${quantity}</span><button onclick="increment(${id})" class="text-gray-500 hover:text-green-500 text-lg transition-colors">+</button></div></div>`;
                     selectedProductsDiv.append(productHtml);
@@ -171,13 +216,20 @@
             }
 
             window.increment = function(id) {
-                if (cart[id].quantity < cart[id].stock) { cart[id].quantity++; renderCart(); }
-                else { alert('Jumlah pesanan melebihi stok yang tersedia.'); }
+                if (cart[id].quantity < cart[id].stock) {
+                    cart[id].quantity++;
+                    renderCart();
+                } else {
+                    alert('Jumlah pesanan melebihi stok yang tersedia.');
+                }
             };
 
             window.decrement = function(id) {
-                if (cart[id].quantity > 1) { cart[id].quantity--; }
-                else { delete cart[id]; }
+                if (cart[id].quantity > 1) {
+                    cart[id].quantity--;
+                } else {
+                    delete cart[id];
+                }
                 renderCart();
             };
 
@@ -196,7 +248,11 @@
                 }
                 const payload = {
                     customer: $('#customer_name').val() || null,
-                    products: Object.values(cart).map(item => ({ id: item.id, quantity: item.quantity, price: item.price })),
+                    products: Object.values(cart).map(item => ({
+                        id: item.id,
+                        quantity: item.quantity,
+                        price: item.price
+                    })),
                     payment_method: $('#payment_method').val(),
                 };
 
@@ -215,8 +271,15 @@
                         const customerName = $('#customer_name').find('option:selected').text() || 'Umum';
                         const paymentMethod = $('#payment_method').find('option:selected').text();
                         const now = new Date();
-                        const receiptDate = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-                        const receiptTime = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                        const receiptDate = now.toLocaleDateString('id-ID', {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric'
+                        });
+                        const receiptTime = now.toLocaleTimeString('id-ID', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
 
                         let receiptHtml = `<div style="font-family: 'Courier New', monospace; width: 280px; padding: 10px;">
                             <h2 style="text-align: center; font-size: 1.1em; margin:0;">OLARISELL</h2>
@@ -266,7 +329,7 @@
                         if (errorData && errorData.error) {
                             errorMessage = errorData.error;
                         } else if (errorData) {
-                             errorMessage = Object.values(errorData).flat().join('\n');
+                            errorMessage = Object.values(errorData).flat().join('\n');
                         }
                         alert('Error: ' + errorMessage);
                         submitButton.prop('disabled', false).html('<i class="fas fa-check-circle mr-2"></i>Proses & Cetak');
@@ -277,4 +340,5 @@
     </script>
 
 </body>
+
 </html>

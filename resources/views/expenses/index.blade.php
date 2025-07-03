@@ -157,7 +157,7 @@
             </div>
 
             {{-- Tabel untuk menampilkan daftar pengeluaran --}}
-            <div class="bg-white rounded-lg shadow-md p-6 printable-area">
+            <div class="bg-white rounded-lg shadow-md p-6">
                 {{-- Form Filter Tanggal --}}
                 <form action="{{ route('expenses.index') }}" method="GET" class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-end no-print">
                     <div>
@@ -173,94 +173,102 @@
                         <a href="{{ route('expenses.index') }}" class="w-full text-center bg-gray-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-gray-600" title="Reset Filter"><i class="fas fa-sync-alt"></i></a>
                     </div>
                 </form>
+                {{-- ... (Tabel data Anda) ... --}}
 
-                {{-- Tombol Aksi Ekspor dan Print --}}
-                <div class="flex justify-end items-center mb-4 no-print">
-                    <div>
-                        <button class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded text-sm transition duration-300"><i class="fas fa-file-excel mr-1"></i> Export Excel</button>
-                        <button onclick="window.print()" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded text-sm transition duration-300"><i class="fas fa-print mr-1"></i> Print</button>
-                        <a href="{{-- route('expenses.exportPdf') --}}" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded text-sm transition duration-300"><i class="fas fa-file-pdf mr-1"></i> Export PDF</a>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto table-container">
-                    <table class="min-w-full border-collapse">
-                        <thead>
-                            <tr class="bg-gray-200">
-                                <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Tanggal</th>
-                                <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Kategori</th>
-                                <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Jumlah</th>
-                                <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Status</th>
-                                <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700 no-print">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($expenses as $expense)
-                            <tr class="hover:bg-gray-50 border-b border-gray-200">
-                                <td class="p-3 text-gray-700">{{ \Carbon\Carbon::parse($expense->date)->format('d M Y') }}</td>
-                                <td class="p-3 text-gray-700 font-medium">{{ $expense->category }}</td>
-                                <td class="p-3 text-gray-700">Rp {{ number_format($expense->amount, 0, ',', '.') }}</td>
-                                <td class="p-3">
-                                    @if($expense->payment_status == 'paid')
-                                    <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">Paid</span>
-                                    @else
-                                    <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full">Unpaid</span>
-                                    @endif
-                                </td>
-                                <td class="p-3">
-                                    @if(Auth::user() && Auth::user()->is_superuser)
-                                    <div class="flex space-x-3 items-center">
-                                        @if($expense->payment_status == 'unpaid')
-                                        <a href="{{ url('/expenses/' . $expense->id . '/edit') }}" class="text-yellow-500 hover:text-yellow-700" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        @else
-                                        <span class="text-gray-400 cursor-not-allowed" title="Tidak bisa diedit karena sudah lunas">
-                                            <i class="fas fa-edit"></i>
-                                        </span>
-                                        @endif
-                                        <form action="{{ url('/expenses/' . $expense->id) }}" method="POST" onsubmit="confirmDelete(event);">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-500 hover:text-red-700" title="Delete">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                    @else
-                                    <span class="text-gray-400">-</span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="5" class="text-center p-6 text-gray-500">
-                                    Tidak ada data pengeluaran yang ditemukan.
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                        @if(isset($grandTotal) && $expenses->isNotEmpty())
-                        <tfoot>
-                            <tr class="bg-gray-200 font-bold">
-                                <td colspan="2" class="p-3 text-right text-gray-800">Total Pengeluaran:</td>
-                                <td class="p-3 text-gray-900">
-                                    Rp {{ number_format($grandTotal, 0, ',', '.') }}
-                                </td>
-                                <td colspan="2" class="p-3 no-print"></td>
-                            </tr>
-                        </tfoot>
-                        @endif
-                    </table>
-                </div>
-
+                {{-- Link Paginasi --}}
                 @if($expenses instanceof \Illuminate\Pagination\Paginator && $expenses->hasPages())
                 <div class="mt-6 no-print">
+                    {{-- 'appends' akan memastikan filter tanggal tetap ada saat pindah halaman --}}
                     {{ $expenses->appends(request()->query())->links() }}
                 </div>
                 @endif
             </div>
+
+            {{-- Tombol Aksi Ekspor dan Print --}}
+            <div class="flex justify-end items-center mb-4 no-print">
+                <div>
+                    <button onclick="window.print()" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded text-sm transition duration-300"><i class="fas fa-print mr-1"></i>Print / Export PDF</button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto table-container">
+                <table class="min-w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Tanggal</th>
+                            <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Kategori</th>
+                            <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Jumlah</th>
+                            <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700">Status</th>
+                            <th class="border-b-2 border-gray-300 p-3 text-left text-sm font-semibold text-gray-700 no-print">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($expenses as $expense)
+                        <tr class="hover:bg-gray-50 border-b border-gray-200">
+                            <td class="p-3 text-gray-700">{{ \Carbon\Carbon::parse($expense->date)->format('d M Y, H:i') }}</td>
+                            <td class="p-3 text-gray-700 font-medium">{{ $expense->category }}</td>
+                            <td class="p-3 text-gray-700">Rp {{ number_format($expense->amount, 0, ',', '.') }}</td>
+                            <td class="p-3">
+                                @if($expense->payment_status == 'paid')
+                                <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full">Paid</span>
+                                @else
+                                <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full">Unpaid</span>
+                                @endif
+                            </td>
+                            <td class="p-3">
+                                @if(Auth::user() && Auth::user()->is_superuser)
+                                <div class="flex space-x-3 items-center">
+                                    @if($expense->payment_status == 'unpaid')
+                                    <a href="{{ url('/expenses/' . $expense->id . '/edit') }}" class="text-yellow-500 hover:text-yellow-700" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    @else
+                                    <span class="text-gray-400 cursor-not-allowed" title="Tidak bisa diedit karena sudah lunas">
+                                        <i class="fas fa-edit"></i>
+                                    </span>
+                                    @endif
+                                    <form action="{{ url('/expenses/' . $expense->id) }}" method="POST" onsubmit="confirmDelete(event);">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-500 hover:text-red-700" title="Delete">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                @else
+                                <span class="text-gray-400">-</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center p-6 text-gray-500">
+                                Tidak ada data pengeluaran yang ditemukan.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                    @if(isset($grandTotal) && $expenses->isNotEmpty())
+                    <tfoot>
+                        <tr class="bg-gray-200 font-bold">
+                            <td colspan="2" class="p-3 text-right text-gray-800">Total Pengeluaran:</td>
+                            <td class="p-3 text-gray-900">
+                                Rp {{ number_format($grandTotal, 0, ',', '.') }}
+                            </td>
+                            <td colspan="2" class="p-3 no-print"></td>
+                        </tr>
+                    </tfoot>
+                    @endif
+                </table>
+            </div>
+
+            @if($expenses instanceof \Illuminate\Pagination\Paginator && $expenses->hasPages())
+            <div class="mt-6 no-print">
+                {{ $expenses->appends(request()->query())->links() }}
+            </div>
+            @endif
         </div>
+    </div>
     </div>
 </body>
 

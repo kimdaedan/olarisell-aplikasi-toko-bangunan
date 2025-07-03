@@ -117,9 +117,7 @@
 
                 <div class="flex justify-end items-center mb-4 no-print">
                     <div>
-                        <button class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded text-sm transition duration-300"><i class="fas fa-file-excel mr-1"></i> Export Excel</button>
-                        <button onclick="window.print()" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded text-sm transition duration-300"><i class="fas fa-print mr-1"></i> Print</button>
-                        <a href="{{-- route('gudang.exportPdf') --}}" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded text-sm transition duration-300"><i class="fas fa-file-pdf mr-1"></i> Export PDF</a>
+                        <button onclick="window.print()" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded text-sm transition duration-300"><i class="fas fa-print mr-1"></i>Print / Export PDF</button>
                     </div>
                 </div>
 

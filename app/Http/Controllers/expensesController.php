@@ -17,63 +17,66 @@ class ExpensesController extends Controller
     protected $client;
 
     /**
-     * Base URI untuk API endpoint pengeluaran di Django.
+     * API endpoint for expenses in Django.
      * @var string
      */
-    protected $apiEndpoint = 'gudang/pengeluaran/'; // Sesuai permintaan Anda
+    protected $apiEndpoint = 'gudang/pengeluaran/'; // As per your request
 
     public function __construct()
     {
-        // Inisialisasi Guzzle Client dengan base URI ke API Django Anda
+        // Initialize the Guzzle Client for all methods in this controller
         $this->client = new Client(['base_uri' => 'http://127.0.0.1:8000/api/']);
     }
 
     /**
-     * Menampilkan daftar pengeluaran dengan filter dan paginasi dari API.
+     * Display a paginated list of expenses with filtering.
      */
     public function index(Request $request)
     {
         try {
-            // Mengambil semua parameter filter dari request
             $queryParams = [
                 'page' => $request->input('page', 1),
                 'start_date' => $request->input('start_date'),
                 'end_date' => $request->input('end_date'),
             ];
 
-            // Menghapus parameter yang kosong agar tidak dikirim ke API
-            $filteredParams = array_filter($queryParams);
-
-            // Mengirim permintaan ke API dengan parameter query
             $response = $this->client->get($this->apiEndpoint, [
-                'query' => $filteredParams
+                'query' => array_filter($queryParams)
             ]);
 
             $data = json_decode($response->getBody()->getContents());
 
-            // Membuat Paginator Laravel secara manual dari data API
             $expenses = new LengthAwarePaginator(
-                $data->results ?? [], // Data untuk halaman ini
-                $data->count ?? 0,    // Jumlah total semua data
-                25,                   // Jumlah item per halaman (sesuaikan dengan Django)
-                $queryParams['page'], // Halaman saat ini
+                $data->results ?? [],
+                $data->count ?? 0,
+                25, // Match this with your Django pagination setting
+                $queryParams['page'],
                 ['path' => $request->url(), 'query' => $request->query()]
             );
 
             $grandTotal = $data->grand_total ?? 0;
 
         } catch (\Exception $e) {
-            Log::error('Gagal mengambil data pengeluaran dari Django: ' . $e->getMessage());
+            Log::error('Failed to fetch expenses from Django: ' . $e->getMessage());
             $expenses = new LengthAwarePaginator([], 0, 25);
             $grandTotal = 0;
-            return back()->with('error', 'Gagal menghubungi API Django. Pastikan server API berjalan.');
+            return back()->with('error', 'Failed to connect to the API server. Please ensure the Django server is running.');
         }
 
         return view('expenses.index', compact('expenses', 'grandTotal'));
     }
 
     /**
-     * Menyimpan data pengeluaran baru ke API Django.
+     * Show the form for creating a new resource.
+     * In this case, the form is on the index page, so we redirect.
+     */
+    public function create()
+    {
+        return redirect()->route('expenses.index');
+    }
+
+    /**
+     * Store a newly created expense in the Django API.
      */
     public function store(Request $request)
     {
@@ -93,31 +96,31 @@ class ExpensesController extends Controller
                     'payment_status' => $request->status,
                 ]
             ]);
-            return redirect()->route('expenses.index')->with('success', 'Pengeluaran berhasil ditambahkan.');
+            return redirect()->route('expenses.index')->with('success', 'Expense added successfully.');
         } catch (\Exception $e) {
-            Log::error('Gagal menambah pengeluaran ke Django: ' . $e->getMessage());
-            return back()->with('error', 'Gagal menyimpan data ke server.');
+            Log::error('Failed to add expense to Django: ' . $e->getMessage());
+            return back()->with('error', 'Failed to save data to the server.');
         }
     }
 
     /**
-     * Menampilkan form untuk mengedit pengeluaran.
+     * Show the form for editing the specified expense.
      */
     public function edit($id)
     {
         try {
-            // Mengambil satu data dari API berdasarkan ID
+            // Fetch the specific expense from the API
             $response = $this->client->get($this->apiEndpoint . $id . '/');
             $expense = json_decode($response->getBody()->getContents());
         } catch (\Exception $e) {
-            Log::error("Gagal mengambil data pengeluaran (ID: {$id}): " . $e->getMessage());
-            return redirect()->route('expenses.index')->with('error', 'Data pengeluaran tidak ditemukan.');
+            Log::error("Failed to fetch expense (ID: {$id}): " . $e->getMessage());
+            return redirect()->route('expenses.index')->with('error', 'The requested expense was not found.');
         }
         return view('expenses.edit', compact('expense'));
     }
 
     /**
-     * Mengupdate data pengeluaran di API Django.
+     * Update the specified expense in the Django API.
      */
     public function update(Request $request, $id)
     {
@@ -137,29 +140,29 @@ class ExpensesController extends Controller
                     'payment_status' => $request->status,
                 ]
             ]);
-            return redirect()->route('expenses.index')->with('success', 'Pengeluaran berhasil diperbarui.');
+            return redirect()->route('expenses.index')->with('success', 'Expense updated successfully.');
         } catch (\Exception $e) {
-            Log::error("Gagal memperbarui pengeluaran (ID: {$id}): " . $e->getMessage());
-            return back()->with('error', 'Gagal memperbarui data.');
+            Log::error("Failed to update expense (ID: {$id}): " . $e->getMessage());
+            return back()->with('error', 'Failed to update data.');
         }
     }
 
     /**
-     * Menghapus data pengeluaran dari API Django.
+     * Remove the specified expense from the Django API.
      */
     public function destroy($id)
     {
         try {
             $this->client->delete($this->apiEndpoint . $id . '/');
-            return redirect()->route('expenses.index')->with('success', 'Pengeluaran berhasil dihapus.');
+            return redirect()->route('expenses.index')->with('success', 'Expense deleted successfully.');
         } catch (\Exception $e) {
-            Log::error("Gagal menghapus pengeluaran (ID: {$id}): " . $e->getMessage());
-            return back()->with('error', 'Gagal menghapus data.');
+            Log::error("Failed to delete expense (ID: {$id}): " . $e->getMessage());
+            return back()->with('error', 'Failed to delete data.');
         }
     }
 
     /**
-     * Mengekspor data pengeluaran ke PDF.
+     * Export expenses data to a PDF file.
      */
     public function exportPdf(Request $request)
     {
@@ -169,7 +172,7 @@ class ExpensesController extends Controller
                 'end_date' => $request->input('end_date'),
             ];
 
-            // Ambil semua data (tanpa paginasi) dari API untuk di-render ke PDF
+            // Fetch all data (without pagination) from the API to render in the PDF
             $response = $this->client->get($this->apiEndpoint, [
                 'query' => array_filter($queryParams)
             ]);
@@ -178,11 +181,11 @@ class ExpensesController extends Controller
             $expenses = isset($responseData['results']) ? $responseData['results'] : $responseData;
 
             $pdf = Pdf::loadView('expenses.pdf', compact('expenses'));
-            return $pdf->download('laporan-pengeluaran.pdf');
+            return $pdf->download('expenses-report.pdf');
 
         } catch (\Exception $e) {
-            Log::error('Gagal mengekspor PDF pengeluaran: ' . $e->getMessage());
-            return redirect()->route('expenses.index')->with('error', 'Gagal membuat laporan PDF.');
+            Log::error('Failed to export expenses PDF: ' . $e->getMessage());
+            return redirect()->route('expenses.index')->with('error', 'Failed to create PDF report.');
         }
     }
 }
