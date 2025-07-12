@@ -22,30 +22,44 @@
 
         /* Style khusus untuk mode cetak */
         @media print {
+            /* Atur halaman cetak */
+            @page {
+                size: A4 landscape; /* Ukuran kertas A4, orientasi landscape */
+                margin: 20mm;
+            }
 
-            /* Sembunyikan semua elemen yang memiliki kelas 'no-print' */
+            /* Atur skala/zoom konten */
+            body {
+                zoom: 70%; /* Skala 70% */
+                -moz-transform: scale(0.7); /* Untuk Firefox */
+            }
+
+            /* Sembunyikan semua elemen yang tidak perlu dicetak */
             .no-print {
                 display: none !important;
             }
 
             /* Pastikan konten utama mengisi seluruh halaman cetak */
-            body,
-            .main-content {
+            body, .main-content {
                 margin: 0;
                 padding: 0;
                 background-color: white;
             }
 
-            /* Hapus bayangan dan border dari area yang akan dicetak */
+            /* Hapus style yang tidak perlu dari area cetak */
             .printable-area {
                 box-shadow: none !important;
                 border: none !important;
                 padding: 0 !important;
             }
 
-            /* Pastikan tabel menggunakan seluruh lebar */
             table {
                 width: 100%;
+                font-size: 14pt; /* Perbesar font agar terbaca setelah di-zoom out */
+            }
+
+            th, td {
+                padding: 10px;
             }
         }
     </style>
